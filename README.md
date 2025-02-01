@@ -1,1 +1,1 @@
-# react-rsschool
+# rsschool-react
