@@ -1,7 +1,8 @@
-import { Component } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Card, CardItem } from '../card/Card';
 import s from './style.module.css';
-import Spinner from '../spinner/Spinner';
+import { Spinner } from '../spinner/Spinner';
+import { Pagination } from '../pagination/Pagination.tsx';
 
 type ResponseType = {
   count: number;
@@ -10,31 +11,31 @@ type ResponseType = {
   results: CardItem[];
 };
 
-type StateType = {
-  result: ResponseType;
-  loading: boolean;
-  error: string | null;
+const RESULT_DEFAULT = {
+  count: 0,
+  next: '',
+  previous: '',
+  results: [],
 };
 
-const STATE_DEFAULT = {
-  result: {
-    count: 0,
-    next: '',
-    previous: '',
-    results: [],
-  },
-  loading: true,
-  error: null,
-};
+const ITEMS_PER_PAGE = 10;
 
-export class CardList extends Component<{ searchValue: string }> {
-  state: StateType = STATE_DEFAULT;
+export const CardList = ({
+  searchValue,
+}: {
+  searchValue: string;
+}): ReactElement => {
+  const [result, setResult] = useState<ResponseType>(RESULT_DEFAULT);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  fetchData = (): void => {
-    this.setState({ loading: true, error: null });
+  const fetchData = useCallback((): void => {
+    setLoading(true);
+    setError(null);
 
     fetch(
-      `https://swapi.dev/api/planets/?search=${this.props.searchValue.trim()}`
+      `https://swapi.dev/api/planets/?search=${searchValue.trim()}&page=${currentPage}`
     )
       .then((response) => {
         if (!response.ok) {
@@ -43,37 +44,34 @@ export class CardList extends Component<{ searchValue: string }> {
         return response.json();
       })
       .then((data: ResponseType) => {
-        this.setState({ result: data, loading: false });
+        setResult(data);
       })
       .catch((error) => {
-        this.setState({ error: error.message, loading: false });
-      });
+        setError(error.message);
+      })
+      .finally(() => setLoading(false));
+  }, [searchValue, currentPage]);
+
+  useEffect(() => {
+    fetchData();
+  }, [searchValue, currentPage, fetchData]);
+
+  const handleClickPaginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
   };
 
-  componentDidMount() {
-    this.fetchData();
+  if (loading) {
+    return <Spinner />;
+  }
+  if (result.results.length === 0) {
+    return <p>No results found.</p>;
+  }
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
-  componentDidUpdate(prevProps: { searchValue: string }) {
-    if (this.props.searchValue !== prevProps.searchValue) {
-      this.fetchData();
-    }
-  }
-
-  render() {
-    const { result, loading, error } = this.state;
-
-    if (loading) {
-      return <Spinner />;
-    }
-    if (result.results.length === 0) {
-      return <p>No results found.</p>;
-    }
-    if (error) {
-      return <div>Error: {error}</div>;
-    }
-
-    return (
+  return (
+    <div>
       <table className={s.table}>
         <thead>
           <tr>
@@ -87,6 +85,12 @@ export class CardList extends Component<{ searchValue: string }> {
           ))}
         </tbody>
       </table>
-    );
-  }
-}
+      <Pagination
+        itemsPerPage={ITEMS_PER_PAGE}
+        totalItems={result.count}
+        paginate={handleClickPaginate}
+        currentPage={currentPage}
+      />
+    </div>
+  );
+};

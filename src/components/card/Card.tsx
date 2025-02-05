@@ -1,4 +1,4 @@
-import { Component, HTMLAttributes } from 'react';
+import { ReactElement } from 'react';
 
 export type CardItem = {
   name: string;
@@ -17,16 +17,11 @@ export type CardItem = {
   url: string;
 };
 
-export class Card extends Component<
-  { item: CardItem } & HTMLAttributes<HTMLTableRowElement>
-> {
-  render() {
-    const { item, ...rest } = this.props;
-    return (
-      <tr {...rest}>
-        <td>{item.name}</td>
-        <td>{item.terrain}</td>
-      </tr>
-    );
-  }
-}
+export const Card = ({ item }: { item: CardItem }): ReactElement => {
+  return (
+    <tr>
+      <td>{item.name}</td>
+      <td>{item.terrain}</td>
+    </tr>
+  );
+};

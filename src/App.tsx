@@ -1,30 +1,28 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { CardList } from './components/cardList/CardList';
 import { Search } from './components/search/Search';
 import { ErrorButton } from './components/errorButton/ErrorButton';
 
-class App extends Component {
-  state: { searchValue: string } = {
-    searchValue: localStorage.getItem('searchValue') ?? '',
-  };
+const App = () => {
+  const [searchValue, setSearchValue] = useState(
+    localStorage.getItem('searchValue') ?? ''
+  );
 
-  handleSearchChange = (value: string): void => {
+  const handleSearchChange = (value: string): void => {
     localStorage.setItem('searchValue', value);
-    this.setState({ searchValue: value });
+    setSearchValue(value);
   };
 
-  render() {
-    return (
-      <div>
-        <Search
-          handleClickSearch={this.handleSearchChange}
-          defaultSearchValue={this.state.searchValue}
-        />
-        <CardList searchValue={this.state.searchValue} />
-        <ErrorButton />
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <Search
+        onClickSearch={handleSearchChange}
+        defaultSearchValue={searchValue}
+      />
+      <CardList searchValue={searchValue} />
+      <ErrorButton />
+    </div>
+  );
+};
 
 export default App;

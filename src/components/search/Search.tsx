@@ -1,36 +1,38 @@
-import { ChangeEvent, Component } from 'react';
+import { ChangeEvent, ReactElement, useState } from 'react';
 import { Input } from '../input/Input.tsx';
 import { Button } from '../button/Button.tsx';
 import s from './style.module.css';
 
 interface Props {
-  handleClickSearch: (value: string) => void;
+  onClickSearch: (value: string) => void;
   defaultSearchValue?: string;
 }
 
-export class Search extends Component<Props> {
-  state = {
-    inputValue: this.props.defaultSearchValue || '',
+export const Search = ({
+  onClickSearch,
+  defaultSearchValue = '',
+}: Props): ReactElement => {
+  const [inputValue, setInputValue] = useState(defaultSearchValue);
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setInputValue(e.target.value);
   };
 
-  handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ inputValue: e.target.value });
+  const handleClickSearch = (): void => {
+    onClickSearch(inputValue);
   };
 
-  handleClickSearch = (): void => {
-    this.props.handleClickSearch(this.state.inputValue);
-  };
-
-  render() {
-    return (
-      <div className={s.search}>
-        <Input
-          value={this.state.inputValue}
-          onChange={this.handleInputChange}
-          placeholder="Enter search term"
-        />
-        <Button onClick={this.handleClickSearch}>Search</Button>
-      </div>
-    );
-  }
-}
+  return (
+    <div className={s.search}>
+      <Input
+        value={inputValue}
+        onChange={handleInputChange}
+        placeholder="Enter search term"
+        aria-label="Search input"
+      />
+      <Button onClick={handleClickSearch} aria-label="Search button">
+        Search
+      </Button>
+    </div>
+  );
+};
