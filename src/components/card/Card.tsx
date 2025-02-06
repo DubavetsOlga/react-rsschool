@@ -1,4 +1,6 @@
 import { ReactElement } from 'react';
+import { useSearchParams } from 'react-router';
+import { getIdFromUrl } from '../../utils/getIdFromURL.ts';
 
 export type CardItem = {
   name: string;
@@ -18,8 +20,16 @@ export type CardItem = {
 };
 
 export const Card = ({ item }: { item: CardItem }): ReactElement => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleClickDetail = () => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('detail', getIdFromUrl(item.url));
+    setSearchParams(newSearchParams);
+  };
+
   return (
-    <tr>
+    <tr onClick={handleClickDetail}>
       <td>{item.name}</td>
       <td>{item.terrain}</td>
     </tr>
