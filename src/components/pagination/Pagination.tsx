@@ -1,37 +1,45 @@
 import s from './style.module.css';
+import { useSearchParams } from 'react-router';
+import { ReactElement } from 'react';
 
-type Props = {
+interface Props {
   itemsPerPage: number;
   totalItems: number;
-  paginate: (pageNumber: number) => void;
-  currentPage: number;
-};
+}
 
 export const Pagination = ({
   itemsPerPage,
   totalItems,
-  paginate,
-  currentPage,
-}: Props) => {
-  const pageNumbers = [];
+}: Props): ReactElement => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = searchParams.get('page') ?? '1';
 
-  for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  const handleClick = (pageNumber: number) => {
-    paginate(pageNumber);
+  if (totalPages <= 1) return <></>;
+
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  const handleClick = (pageNumber: number): void => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('page', pageNumber.toString());
+    setSearchParams(newSearchParams);
   };
 
   return (
-    <nav>
+    <nav aria-label="Pagination">
       <ul className={s.pagination}>
         {pageNumbers.map((number) => (
           <li
             key={number}
-            className={`${s.page_item} ${currentPage === number ? s.active : ''}`}
+            className={`${s.page_item} ${+currentPage === number ? s.active : ''}`}
+            aria-current={+currentPage === number ? 'page' : undefined}
           >
-            <button onClick={() => handleClick(number)} className={s.page_link}>
+            <button
+              onClick={() => handleClick(number)}
+              className={s.page_link}
+              aria-label={`Go to page ${number}`}
+            >
               {number}
             </button>
           </li>
