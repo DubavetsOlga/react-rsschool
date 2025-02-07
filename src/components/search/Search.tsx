@@ -1,11 +1,10 @@
 import { ReactElement, useRef } from 'react';
-import { Input } from '../input/Input.tsx';
-import { Button } from '../button/Button.tsx';
+import { Input } from '../input/Input';
+import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useSearchParams } from 'react-router';
 
 export const Search = (): ReactElement => {
-  //  useInitializeSearchParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const inputRef = useRef<HTMLInputElement>(null);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CardItem } from '../components/card/Card.tsx';
+import { CardItem } from '../components/card/Card';
 
 type ResponseType = {
   count: number;
@@ -44,7 +44,9 @@ export const useFetchPlanets = <T = ResponseType>({
           setError(error.message);
         }
       } finally {
-        setLoading(false);
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
