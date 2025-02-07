@@ -1,12 +1,15 @@
-import { Button } from '../button/Button.tsx';
-import { useFetchPlanets } from '../../hooks/useFetchPlanets.ts';
-import { Spinner } from '../spinner/Spinner.tsx';
-import { CardItem } from '../card/Card.tsx';
-import { useSearchParams } from 'react-router';
+import { Button } from '../button/Button';
+import { useFetchPlanets } from '../../hooks/useFetchPlanets';
+import { Spinner } from '../spinner/Spinner';
+import { CardItem } from '../card/Card';
+import { useSearchParams, useNavigate } from 'react-router';
 import s from './style.module.css';
+import { Path } from '../Routing';
+import { useCallback, useEffect } from 'react';
 
 export const DetailedCard = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const detailId = searchParams.get('detail');
 
   const { result, loading, error } = useFetchPlanets<CardItem>({
@@ -15,15 +18,21 @@ export const DetailedCard = () => {
     detail: detailId ?? '',
   });
 
-  if (!detailId) {
-    return null;
-  }
-
-  const handleClickCloseDetails = () => {
+  const handleClickCloseDetails = useCallback(() => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.delete('detail');
-    setSearchParams(newSearchParams);
-  };
+
+    navigate({
+      pathname: Path.Main,
+      search: newSearchParams.toString(),
+    });
+  }, [navigate, searchParams]);
+
+  useEffect(() => {
+    if (!detailId) {
+      handleClickCloseDetails();
+    }
+  }, [detailId, handleClickCloseDetails]);
 
   if (error) return <div>Error: {error}</div>;
 

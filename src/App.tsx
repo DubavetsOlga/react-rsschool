@@ -1,15 +1,15 @@
-import { Search } from './components/search/Search';
-import { ErrorButton } from './components/errorButton/ErrorButton';
-import { Results } from './components/results/Results.tsx';
+import { useInitializeSearchParams } from './hooks/useInitializeSearchParams';
+import { Routing } from './components/Routing';
+import { useEffect } from 'react';
 
 const App = () => {
-  return (
-    <div>
-      <Search />
-      <Results />
-      <ErrorButton />
-    </div>
-  );
+  const initializeSearchParams = useInitializeSearchParams();
+
+  useEffect(() => {
+    initializeSearchParams();
+  }, [initializeSearchParams]);
+
+  return <Routing />;
 };
 
 export default App;
