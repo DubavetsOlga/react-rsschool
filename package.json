@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://DubavetsOlga.github.io/react-rsschool",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,9 +12,12 @@
     "format:fix": "prettier --write .",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "prepare": "husky && jest"
+    "prepare": "husky && jest",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
+    "gh-pages": "^6.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router": "^7.1.5",
