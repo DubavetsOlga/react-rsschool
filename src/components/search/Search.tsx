@@ -1,36 +1,37 @@
-import { ChangeEvent, Component } from 'react';
-import { Input } from '../input/Input.tsx';
-import { Button } from '../button/Button.tsx';
+import { ReactElement, useEffect, useRef, useCallback } from 'react';
+import { Input } from '../input/Input';
+import { Button } from '../button/Button';
 import s from './style.module.css';
+import { useSearchParams } from 'react-router';
+import { useInitializeSearchParams } from '../../hooks/useInitializeSearchParams';
 
-interface Props {
-  handleClickSearch: (value: string) => void;
-  defaultSearchValue?: string;
-}
+export const Search = (): ReactElement => {
+  const initializeSearchParams = useInitializeSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-export class Search extends Component<Props> {
-  state = {
-    inputValue: this.props.defaultSearchValue || '',
-  };
+  useEffect(() => {
+    initializeSearchParams();
+  }, [initializeSearchParams]);
 
-  handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ inputValue: e.target.value });
-  };
+  const handleClickSearch = useCallback((): void => {
+    const inputValue = inputRef.current?.value || '';
+    localStorage.setItem('searchValue', inputValue);
 
-  handleClickSearch = (): void => {
-    this.props.handleClickSearch(this.state.inputValue);
-  };
+    setSearchParams(inputValue ? { search: inputValue } : {});
+  }, [setSearchParams]);
 
-  render() {
-    return (
-      <div className={s.search}>
-        <Input
-          value={this.state.inputValue}
-          onChange={this.handleInputChange}
-          placeholder="Enter search term"
-        />
-        <Button onClick={this.handleClickSearch}>Search</Button>
-      </div>
-    );
-  }
-}
+  return (
+    <div className={s.search}>
+      <Input
+        ref={inputRef}
+        defaultValue={searchParams.get('search') || ''}
+        placeholder="Enter search term"
+        aria-label="Search input"
+      />
+      <Button onClick={handleClickSearch} aria-label="Search button">
+        Search
+      </Button>
+    </div>
+  );
+};

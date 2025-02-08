@@ -1,92 +1,50 @@
-import { Component } from 'react';
-import { Card, CardItem } from '../card/Card';
+import { ReactElement, useCallback } from 'react';
+import { Card } from '../card/Card';
 import s from './style.module.css';
-import Spinner from '../spinner/Spinner';
+import { Spinner } from '../spinner/Spinner';
+import { Pagination } from '../pagination/Pagination';
+import { useSearchParams } from 'react-router';
+import { useFetchPlanets } from '../../hooks/useFetchPlanets';
 
-type ResponseType = {
-  count: number;
-  next: string;
-  previous: string;
-  results: CardItem[];
-};
+const ITEMS_PER_PAGE = 10;
 
-type StateType = {
-  result: ResponseType;
-  loading: boolean;
-  error: string | null;
-};
+export const CardList = (): ReactElement => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchValue = searchParams.get('search') ?? '';
+  const currentPage = searchParams.get('page') ?? '1';
 
-const STATE_DEFAULT = {
-  result: {
-    count: 0,
-    next: '',
-    previous: '',
-    results: [],
-  },
-  loading: true,
-  error: null,
-};
+  const { result, loading, error } = useFetchPlanets({
+    searchValue,
+    currentPage,
+    detail: '',
+  });
 
-export class CardList extends Component<{ searchValue: string }> {
-  state: StateType = STATE_DEFAULT;
+  const handleClickPanel = useCallback(() => {
+    if (!searchParams.get('detail')) return;
 
-  fetchData = (): void => {
-    this.setState({ loading: true, error: null });
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.delete('detail');
+    setSearchParams(newSearchParams);
+  }, [searchParams, setSearchParams]);
 
-    fetch(
-      `https://swapi.dev/api/planets/?search=${this.props.searchValue.trim()}`
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        return response.json();
-      })
-      .then((data: ResponseType) => {
-        this.setState({ result: data, loading: false });
-      })
-      .catch((error) => {
-        this.setState({ error: error.message, loading: false });
-      });
-  };
+  if (loading) return <Spinner />;
+  if (error) return <div>Error: {error}</div>;
+  if (result.results?.length === 0) return <p>No results found.</p>;
 
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  componentDidUpdate(prevProps: { searchValue: string }) {
-    if (this.props.searchValue !== prevProps.searchValue) {
-      this.fetchData();
-    }
-  }
-
-  render() {
-    const { result, loading, error } = this.state;
-
-    if (loading) {
-      return <Spinner />;
-    }
-    if (result.results.length === 0) {
-      return <p>No results found.</p>;
-    }
-    if (error) {
-      return <div>Error: {error}</div>;
-    }
-
-    return (
+  return (
+    <div role="button" tabIndex={0} aria-label="Close detail view">
       <table className={s.table}>
-        <thead>
+        <thead onClick={handleClickPanel}>
           <tr>
             <th>Name</th>
             <th>Terrain</th>
           </tr>
         </thead>
         <tbody>
-          {result.results.map((el) => (
-            <Card key={el.url} item={el} />
-          ))}
+          {result.results?.map((el) => <Card key={el.url} item={el} />)}
         </tbody>
       </table>
-    );
-  }
-}
+      <Pagination itemsPerPage={ITEMS_PER_PAGE} totalItems={result.count} />
+    </div>
+  );
+};

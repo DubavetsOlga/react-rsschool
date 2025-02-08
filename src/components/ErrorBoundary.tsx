@@ -1,5 +1,5 @@
 import { Component, ReactNode } from 'react';
-import { Button } from './button/Button.tsx';
+import { Button } from './button/Button';
 
 type ErrorBoundaryProps = {
   children: ReactNode;

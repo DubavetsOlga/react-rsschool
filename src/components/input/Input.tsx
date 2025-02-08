@@ -1,9 +1,11 @@
-import { Component, InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, ReactElement, forwardRef } from 'react';
 import s from './style.module.css';
 
-export class Input extends Component<InputHTMLAttributes<HTMLInputElement>> {
-  render() {
-    const { ...rest } = this.props;
-    return <input className={s.input} {...rest} />;
-  }
-}
+export const Input = forwardRef<
+  HTMLInputElement,
+  InputHTMLAttributes<HTMLInputElement>
+>(({ ...rest }, ref): ReactElement => {
+  return <input className={s.input} ref={ref} {...rest} />;
+});
+
+Input.displayName = 'Input';

@@ -1,4 +1,6 @@
-import { Component, HTMLAttributes } from 'react';
+import { ReactElement } from 'react';
+import { useSearchParams, useNavigate } from 'react-router';
+import { getIdFromUrl } from '../../utils/getIdFromURL';
 
 export type CardItem = {
   name: string;
@@ -17,16 +19,40 @@ export type CardItem = {
   url: string;
 };
 
-export class Card extends Component<
-  { item: CardItem } & HTMLAttributes<HTMLTableRowElement>
-> {
-  render() {
-    const { item, ...rest } = this.props;
-    return (
-      <tr {...rest}>
-        <td>{item.name}</td>
-        <td>{item.terrain}</td>
-      </tr>
-    );
-  }
-}
+export const Card = ({ item }: { item: CardItem }): ReactElement => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const handleClickDetail = () => {
+    const id = getIdFromUrl(item.url);
+    if (!id) {
+      return;
+    }
+
+    const newSearchParams = new URLSearchParams(searchParams);
+
+    if (id === searchParams.get('detail')) {
+      newSearchParams.delete('detail');
+      setSearchParams(newSearchParams);
+      return;
+    }
+
+    newSearchParams.set('detail', id);
+    navigate({
+      pathname: '/detailed',
+      search: newSearchParams.toString(),
+    });
+  };
+
+  return (
+    <tr
+      onClick={handleClickDetail}
+      role="button"
+      aria-label={`View details of ${item.name}`}
+      style={{ cursor: 'pointer' }}
+    >
+      <td>{item.name}</td>
+      <td>{item.terrain}</td>
+    </tr>
+  );
+};
