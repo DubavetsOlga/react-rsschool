@@ -20,13 +20,24 @@ export type CardItem = {
 };
 
 export const Card = ({ item }: { item: CardItem }): ReactElement => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const handleClickDetail = () => {
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('detail', getIdFromUrl(item.url));
+    const id = getIdFromUrl(item.url);
+    if (!id) {
+      return;
+    }
 
+    const newSearchParams = new URLSearchParams(searchParams);
+
+    if (id === searchParams.get('detail')) {
+      newSearchParams.delete('detail');
+      setSearchParams(newSearchParams);
+      return;
+    }
+
+    newSearchParams.set('detail', id);
     navigate({
       pathname: '/detailed',
       search: newSearchParams.toString(),
@@ -34,7 +45,12 @@ export const Card = ({ item }: { item: CardItem }): ReactElement => {
   };
 
   return (
-    <tr onClick={handleClickDetail}>
+    <tr
+      onClick={handleClickDetail}
+      role="button"
+      aria-label={`View details of ${item.name}`}
+      style={{ cursor: 'pointer' }}
+    >
       <td>{item.name}</td>
       <td>{item.terrain}</td>
     </tr>

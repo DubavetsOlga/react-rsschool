@@ -29,7 +29,7 @@ export const useFetchPlanets = <T = ResponseType>({
       try {
         const url = detail
           ? `https://swapi.dev/api/planets/${detail}`
-          : `https://swapi.dev/api/planets/?search=${searchValue.trim()}&page=${currentPage}`;
+          : `https://swapi.dev/api/planets/?search=${encodeURIComponent(searchValue.trim())}&page=${currentPage}`;
 
         const response = await fetch(url, { signal: abortController.signal });
 

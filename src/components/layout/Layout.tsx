@@ -3,7 +3,7 @@ import { CardList } from '../cardList/CardList';
 import { Outlet } from 'react-router';
 import s from './style.module.css';
 
-const Layout = () => {
+export const Layout = () => {
   return (
     <div>
       <Search />
@@ -14,5 +14,3 @@ const Layout = () => {
     </div>
   );
 };
-
-export default Layout;

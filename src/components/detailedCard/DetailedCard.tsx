@@ -1,11 +1,11 @@
+import { useCallback, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router';
 import { Button } from '../button/Button';
 import { useFetchPlanets } from '../../hooks/useFetchPlanets';
 import { Spinner } from '../spinner/Spinner';
 import { CardItem } from '../card/Card';
-import { useSearchParams, useNavigate } from 'react-router';
 import s from './style.module.css';
 import { Path } from '../Routing';
-import { useCallback, useEffect } from 'react';
 
 export const DetailedCard = () => {
   const navigate = useNavigate();
@@ -37,10 +37,16 @@ export const DetailedCard = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className={s.details}>
-      <h3 className={s.title}>Planet Details</h3>
+    <div
+      className={s.details}
+      role="dialog"
+      aria-labelledby="detailed-card-title"
+    >
+      <h3 id="detailed-card-title" className={s.title}>
+        Planet Details
+      </h3>
       {loading && <Spinner />}
-      {!loading && (
+      {!loading && result && (
         <div>
           <p>Name: {result.name}</p>
           <p>Rotation Period: {result.rotation_period}</p>
@@ -53,7 +59,12 @@ export const DetailedCard = () => {
           <p>Population: {result.population}</p>
         </div>
       )}
-      <Button onClick={handleClickCloseDetails}>Close Details</Button>
+      <Button
+        onClick={handleClickCloseDetails}
+        aria-label="Close detailed view"
+      >
+        Close Details
+      </Button>
     </div>
   );
 };

@@ -1,6 +1,6 @@
-import s from './style.module.css';
 import { useSearchParams } from 'react-router';
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
+import s from './style.module.css';
 
 interface Props {
   itemsPerPage: number;
@@ -16,15 +16,18 @@ export const Pagination = ({
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  if (totalPages <= 1) return <></>;
-
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const pageNumbers = useMemo(() => {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }, [totalPages]);
 
   const handleClick = (pageNumber: number): void => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('page', pageNumber.toString());
+    newSearchParams.delete('detail');
     setSearchParams(newSearchParams);
   };
+
+  if (totalPages <= 1) return <></>;
 
   return (
     <nav aria-label="Pagination">

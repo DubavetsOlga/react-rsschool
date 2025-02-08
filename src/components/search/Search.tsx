@@ -1,26 +1,25 @@
-import { ReactElement, useRef } from 'react';
+import { ReactElement, useEffect, useRef, useCallback } from 'react';
 import { Input } from '../input/Input';
 import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useSearchParams } from 'react-router';
+import { useInitializeSearchParams } from '../../hooks/useInitializeSearchParams';
 
 export const Search = (): ReactElement => {
+  const initializeSearchParams = useInitializeSearchParams();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleClickSearch = (): void => {
+  useEffect(() => {
+    initializeSearchParams();
+  }, [initializeSearchParams]);
+
+  const handleClickSearch = useCallback((): void => {
     const inputValue = inputRef.current?.value || '';
     localStorage.setItem('searchValue', inputValue);
 
-    if (inputValue === '') {
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('search');
-      setSearchParams(newSearchParams);
-    } else {
-      setSearchParams({ search: inputValue });
-    }
-  };
+    setSearchParams(inputValue ? { search: inputValue } : {});
+  }, [setSearchParams]);
 
   return (
     <div className={s.search}>
