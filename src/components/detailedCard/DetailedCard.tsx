@@ -1,9 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { Button } from '../button/Button';
-import { useFetchPlanets } from '../../hooks/useFetchPlanets';
 import { Spinner } from '../spinner/Spinner';
-import { CardItem } from '../card/Card';
 import s from './style.module.css';
 import { Path } from '../Routing';
 import { useGetPlanetByIdQuery } from '../../api/planets/planetsApi.ts';
@@ -13,14 +11,13 @@ import { ThemeContext } from '../../context/ThemeContext.tsx';
 export const DetailedCard = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [errMsg, setErrMsg] = useState('');
   const detailId = searchParams.get('detail');
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
 
-  const { result, loading, error } = useFetchPlanets<CardItem>({
-    currentPage: '',
-    searchValue: '',
-    detail: detailId ?? '',
+  const { data, isLoading, error } = useGetPlanetByIdQuery({
+    planetId: detailId || '',
   });
 
   const handleClickCloseDetails = useCallback(() => {
@@ -39,7 +36,20 @@ export const DetailedCard = () => {
     }
   }, [detailId, handleClickCloseDetails]);
 
-  if (error) return <div>Error: {error}</div>;
+  useEffect(() => {
+    if (error) {
+      let errMsg = 'Some error occurred';
+      if ('data' in error) {
+        const errData = error.data as Error;
+        if ('message' in errData) {
+          errMsg = errData.message as string;
+        }
+      }
+      setErrMsg(errMsg);
+    }
+  }, [error]);
+
+  if (error) return <div>Error: {errMsg}</div>;
 
   return (
     <div
@@ -50,18 +60,18 @@ export const DetailedCard = () => {
       <h3 id="detailed-card-title" className={s.title}>
         Planet Details
       </h3>
-      {loading && <Spinner />}
-      {!loading && result && (
+      {isLoading && <Spinner />}
+      {!isLoading && data && (
         <div>
-          <p>Name: {result.name}</p>
-          <p>Rotation Period: {result.rotation_period}</p>
-          <p>Orbital Period: {result.orbital_period}</p>
-          <p>Diameter: {result.diameter}</p>
-          <p>Climate: {result.climate}</p>
-          <p>Gravity: {result.gravity}</p>
-          <p>Terrain: {result.terrain}</p>
-          <p>Surface Water: {result.surface_water}</p>
-          <p>Population: {result.population}</p>
+          <p>Name: {data.name}</p>
+          <p>Rotation Period: {data.rotation_period}</p>
+          <p>Orbital Period: {data.orbital_period}</p>
+          <p>Diameter: {data.diameter}</p>
+          <p>Climate: {data.climate}</p>
+          <p>Gravity: {data.gravity}</p>
+          <p>Terrain: {data.terrain}</p>
+          <p>Surface Water: {data.surface_water}</p>
+          <p>Population: {data.population}</p>
         </div>
       )}
       <Button
