@@ -4,11 +4,14 @@ import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useSearchParams } from 'react-router';
 import { useInitializeSearchParams } from '../../hooks/useInitializeSearchParams';
+import { removeAllPlanetsFromSelected } from '../../api/planets/planetSlice.ts';
+import { useAppDispatch } from '../../hooks/useAppDispatch.ts';
 
 export const Search = (): ReactElement => {
   const initializeSearchParams = useInitializeSearchParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     initializeSearchParams();
@@ -19,7 +22,9 @@ export const Search = (): ReactElement => {
     localStorage.setItem('searchValue', inputValue);
 
     setSearchParams(inputValue ? { search: inputValue } : {});
-  }, [setSearchParams]);
+
+    dispatch(removeAllPlanetsFromSelected());
+  }, [setSearchParams, dispatch]);
 
   return (
     <div className={s.search}>

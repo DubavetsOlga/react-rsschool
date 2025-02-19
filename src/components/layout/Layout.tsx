@@ -1,6 +1,7 @@
+import { Outlet } from 'react-router';
 import { Search } from '../search/Search';
 import { CardList } from '../cardList/CardList';
-import { Outlet } from 'react-router';
+import { SelectedItems } from '../selectedItems/SelectedItems';
 import s from './style.module.css';
 
 export const Layout = () => {
@@ -11,6 +12,7 @@ export const Layout = () => {
         <CardList />
         <Outlet />
       </div>
+      <SelectedItems />
     </div>
   );
 };
