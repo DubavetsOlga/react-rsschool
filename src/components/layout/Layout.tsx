@@ -5,7 +5,7 @@ import s from './style.module.css';
 
 export const Layout = () => {
   return (
-    <div>
+    <div className={s.layout}>
       <Search />
       <div className={s.container}>
         <CardList />

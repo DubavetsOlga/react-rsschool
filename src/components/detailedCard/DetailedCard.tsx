@@ -6,11 +6,16 @@ import { Spinner } from '../spinner/Spinner';
 import { CardItem } from '../card/Card';
 import s from './style.module.css';
 import { Path } from '../Routing';
+import { useGetPlanetByIdQuery } from '../../api/planets/planetsApi.ts';
+import { THEMES } from '../../context/constants.ts';
+import { ThemeContext } from '../../context/ThemeContext.tsx';
 
 export const DetailedCard = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const detailId = searchParams.get('detail');
+  const context = useContext(ThemeContext);
+  const theme = context ? context.theme : THEMES.LIGHT;
 
   const { result, loading, error } = useFetchPlanets<CardItem>({
     currentPage: '',
@@ -38,7 +43,7 @@ export const DetailedCard = () => {
 
   return (
     <div
-      className={s.details}
+      className={`${s.details} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
       role="dialog"
       aria-labelledby="detailed-card-title"
     >

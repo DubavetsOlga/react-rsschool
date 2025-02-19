@@ -6,8 +6,8 @@
   cursor: pointer;
   border: 2px solid transparent;
   border-radius: 10px;
-  background-color: #242038;
-  color: #e7e6f7;
+  background-color: var(--second-color);
+  color: white;
   transition: all 0.3s ease;
   outline: none;
 }

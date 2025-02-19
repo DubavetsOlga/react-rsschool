@@ -1,6 +1,6 @@
 .table {
   width: 100%;
-  min-width: 440px;
+  min-width: 550px;
   border-collapse: collapse;
   margin: 20px 0;
   font-family: Arial, sans-serif;
@@ -8,6 +8,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .table th,
@@ -17,8 +18,8 @@
 }
 
 .table th {
-  background-color: #616283;
-  color: #e7e6f7;
+  background-color: var(--primary-color);
+  color: white;
   font-weight: bold;
 }
 
@@ -32,4 +33,28 @@
 
 .table td {
   color: #555;
+}
+
+.checkbox {
+  width: 26px;
+}
+
+.name {
+  width: 120px;
+}
+
+.darkTheme.table {
+  background-color: #b4c2cc;
+}
+
+.darkTheme.table td {
+  color: #1f3554;
+}
+
+.darkTheme.table tbody tr:nth-child(even) {
+  background-color: #9DB2BF;
+}
+
+.darkTheme.table tbody tr:hover {
+  background-color: #8196a6;
 }
