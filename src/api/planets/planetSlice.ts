@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PlanetItem } from './planetsApi.types.ts';
+import { PlanetItem } from './planetsApi.types';
 
 type PlanetState = {
   selectedPlanets: {
@@ -26,8 +26,7 @@ export const planetSlice = createSlice({
       state,
       action: PayloadAction<{ name: string }>
     ) => {
-      const { name } = action.payload;
-      delete state.selectedPlanets[name];
+      delete state.selectedPlanets[action.payload.name];
     },
     removeAllPlanetsFromSelected: (state) => {
       state.selectedPlanets = {};

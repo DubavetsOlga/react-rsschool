@@ -1,9 +1,9 @@
 import { Component, ReactNode } from 'react';
-import { Button } from './button/Button';
+import { ErrorFallback } from './ErrorFallback.tsx';
 
 type ErrorBoundaryProps = {
   children: ReactNode;
-  fallback: ReactNode;
+  fallback?: ReactNode;
 };
 
 type ErrorBoundaryState = {
@@ -34,16 +34,19 @@ export class ErrorBoundary extends Component<
   };
 
   render() {
-    const { hasError } = this.state;
+    const { hasError, error } = this.state;
     const { children, fallback } = this.props;
 
     if (hasError) {
       return (
         <>
-          {fallback}
-          <Button onClick={this.resetError} style={{ marginTop: '10px' }}>
-            Retry
-          </Button>
+          {fallback || (
+            <div style={{ padding: '20px', textAlign: 'center' }}>
+              <h1>Something went wrong.</h1>
+              <p>{error?.message}</p>
+            </div>
+          )}
+          <ErrorFallback resetError={this.resetError} />
         </>
       );
     }

@@ -4,8 +4,8 @@ import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useSearchParams } from 'react-router';
 import { useInitializeSearchParams } from '../../hooks/useInitializeSearchParams';
-import { removeAllPlanetsFromSelected } from '../../api/planets/planetSlice.ts';
-import { useAppDispatch } from '../../hooks/useAppDispatch.ts';
+import { removeAllPlanetsFromSelected } from '../../api/planets/planetSlice';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
 
 export const Search = (): ReactElement => {
   const initializeSearchParams = useInitializeSearchParams();

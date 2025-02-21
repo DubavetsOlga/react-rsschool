@@ -1,7 +1,7 @@
 import { useState, useEffect, ReactNode } from 'react';
 import s from './style.module.css';
-import { THEMES } from './constants.ts';
-import { ThemeContext } from './ThemeContext.tsx';
+import { THEMES } from './constants';
+import { ThemeContext } from './ThemeContext';
 
 type ThemeProps = {
   children: ReactNode;

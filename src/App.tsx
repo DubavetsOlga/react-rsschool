@@ -1,5 +1,5 @@
 import { Routing } from './components/Routing';
-import { Theme } from './context/Theme.tsx';
+import { Theme } from './context/Theme';
 import { Header } from './components/header/Header';
 
 const App = () => {

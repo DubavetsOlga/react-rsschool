@@ -1,5 +1,5 @@
-import { PlanetItem, ResponseType } from './planetsApi.types.ts';
-import { baseApi } from '../baseApi.ts';
+import { PlanetItem, ResponseType } from './planetsApi.types';
+import { baseApi } from '../baseApi';
 
 export const planetsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -26,3 +26,4 @@ export const planetsApi = baseApi.injectEndpoints({
 });
 
 export const { useGetPlanetsQuery, useGetPlanetByIdQuery } = planetsApi;
+export const { reducer } = planetsApi;

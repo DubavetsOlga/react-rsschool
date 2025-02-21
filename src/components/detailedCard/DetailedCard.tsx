@@ -1,17 +1,16 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { Button } from '../button/Button';
 import { Spinner } from '../spinner/Spinner';
 import s from './style.module.css';
 import { Path } from '../Routing';
-import { useGetPlanetByIdQuery } from '../../api/planets/planetsApi.ts';
-import { THEMES } from '../../context/constants.ts';
-import { ThemeContext } from '../../context/ThemeContext.tsx';
+import { useGetPlanetByIdQuery } from '../../api/planets/planetsApi';
+import { THEMES } from '../../context/constants';
+import { ThemeContext } from '../../context/ThemeContext';
 
 export const DetailedCard = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [errMsg, setErrMsg] = useState('');
   const detailId = searchParams.get('detail');
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
@@ -36,21 +35,6 @@ export const DetailedCard = () => {
     }
   }, [detailId, handleClickCloseDetails]);
 
-  useEffect(() => {
-    if (error) {
-      let errMsg = 'Some error occurred';
-      if ('data' in error) {
-        const errData = error.data as Error;
-        if ('message' in errData) {
-          errMsg = errData.message as string;
-        }
-      }
-      setErrMsg(errMsg);
-    }
-  }, [error]);
-
-  if (error) return <div>Error: {errMsg}</div>;
-
   return (
     <div
       className={`${s.details} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
@@ -60,6 +44,7 @@ export const DetailedCard = () => {
       <h3 id="detailed-card-title" className={s.title}>
         Planet Details
       </h3>
+      {error && <div>Not found</div>}
       {isLoading && <Spinner />}
       {!isLoading && data && (
         <div>

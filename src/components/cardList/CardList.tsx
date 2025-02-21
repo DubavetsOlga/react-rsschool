@@ -10,9 +10,9 @@ import s from './style.module.css';
 import { Spinner } from '../spinner/Spinner';
 import { Pagination } from '../pagination/Pagination';
 import { useSearchParams } from 'react-router';
-import { useGetPlanetsQuery } from '../../api/planets/planetsApi.ts';
-import { THEMES } from '../../context/constants.ts';
-import { ThemeContext } from '../../context/ThemeContext.tsx';
+import { useGetPlanetsQuery } from '../../api/planets/planetsApi';
+import { THEMES } from '../../context/constants';
+import { ThemeContext } from '../../context/ThemeContext';
 
 const ITEMS_PER_PAGE = 10;
 

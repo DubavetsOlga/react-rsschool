@@ -1,9 +1,9 @@
-import { appReducer, appSlice } from './appSlice.ts';
+import { appReducer, appSlice } from './appSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { planetsApi } from './planets/planetsApi.ts';
-import { baseApi } from './baseApi.ts';
-import { planetReducer, planetSlice } from './planets/planetSlice.ts';
+import { planetsApi } from './planets/planetsApi';
+import { baseApi } from './baseApi';
+import { planetReducer, planetSlice } from './planets/planetSlice';
 
 export const store = configureStore({
   reducer: {

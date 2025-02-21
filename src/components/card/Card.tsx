@@ -5,10 +5,10 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import {
   removePlanetFromSelected,
   addPlanetToSelected,
-} from '../../api/planets/planetSlice.ts';
-import { PlanetItem } from '../../api/planets/planetsApi.types.ts';
+} from '../../api/planets/planetSlice';
+import { PlanetItem } from '../../api/planets/planetsApi.types';
 import s from './style.module.css';
-import { useAppDispatch } from '../../hooks/useAppDispatch.ts';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
 
 export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
   const [searchParams, setSearchParams] = useSearchParams();
