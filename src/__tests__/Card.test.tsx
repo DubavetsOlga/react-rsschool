@@ -1,17 +1,42 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter, useNavigate } from 'react-router';
-import { Card, CardItem } from '../components/card/Card';
+import { BrowserRouter, useNavigate, useSearchParams } from 'react-router';
+import { Card } from '../components/card/Card';
 import '@testing-library/jest-dom';
+import { PlanetItem } from '../api/planets/planetsApi.types';
+import { configureStore } from '@reduxjs/toolkit';
+import {
+  addPlanetToSelected,
+  planetReducer,
+  planetSlice,
+  removePlanetFromSelected,
+} from '../api/planets/planetSlice';
+import { Provider } from 'react-redux';
+import { appReducer, appSlice } from '../api/appSlice';
+import { planetsApi } from '../api/planets/planetsApi';
+import { useAppSelector } from '../hooks/useAppSelector';
+import { useAppDispatch } from '../hooks/useAppDispatch';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
+  useSearchParams: jest.fn(),
   useNavigate: jest.fn(),
 }));
+jest.mock('../hooks/useAppSelector');
+jest.mock('../hooks/useAppDispatch');
 
 const mockNavigate = useNavigate as jest.Mock;
+const mockUseSearchParams = useSearchParams as jest.Mock;
+
+const store = configureStore({
+  reducer: {
+    [appSlice.name]: appReducer,
+    [planetSlice.name]: planetReducer,
+    [planetsApi.reducerPath]: planetsApi.reducer,
+  },
+});
 
 describe('Card Component', () => {
-  const mockCardItem: CardItem = {
+  const mockPlanetItem: PlanetItem = {
     name: 'Tatooine',
     rotation_period: '23',
     orbital_period: '304',
@@ -28,18 +53,34 @@ describe('Card Component', () => {
     url: 'https://swapi.dev/api/planets/1/',
   };
 
+  const mockDispatch = jest.fn();
+  const mockUseAppSelector = useAppSelector as jest.Mock;
+  const mockUseAppDispatch = useAppDispatch as unknown as jest.Mock;
+
   beforeEach(() => {
-    mockNavigate.mockClear();
+    jest.clearAllMocks();
+    mockUseAppDispatch.mockReturnValue(mockDispatch);
+    mockUseAppSelector.mockReturnValue({});
+    //mockNavigate.mockClear();
+    mockNavigate.mockReturnValue(jest.fn());
   });
 
   it('renders card data correctly', () => {
+    const setSearchParamsMock = jest.fn();
+    mockUseSearchParams.mockReturnValue([
+      new URLSearchParams(''),
+      setSearchParamsMock,
+    ]);
+
     render(
       <BrowserRouter>
-        <table>
-          <tbody>
-            <Card item={mockCardItem} />
-          </tbody>
-        </table>
+        <Provider store={store}>
+          <table>
+            <tbody>
+              <Card item={mockPlanetItem} />
+            </tbody>
+          </table>
+        </Provider>
       </BrowserRouter>
     );
 
@@ -48,17 +89,24 @@ describe('Card Component', () => {
   });
 
   it('calls navigate with the correct parameters when row is clicked', () => {
-    const mockNavigate = jest.fn();
+    const setSearchParamsMock = jest.fn();
+    mockUseSearchParams.mockReturnValue([
+      new URLSearchParams(''),
+      setSearchParamsMock,
+    ]);
 
+    const mockNavigate = jest.fn();
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     render(
       <BrowserRouter>
-        <table>
-          <tbody>
-            <Card item={mockCardItem} />
-          </tbody>
-        </table>
+        <Provider store={store}>
+          <table>
+            <tbody>
+              <Card item={mockPlanetItem} />
+            </tbody>
+          </table>
+        </Provider>
       </BrowserRouter>
     );
 
@@ -71,5 +119,102 @@ describe('Card Component', () => {
       pathname: '/detailed',
       search: 'detail=1',
     });
+  });
+
+  test('should delete the "detail" search parameter if it matches the id', () => {
+    const setSearchParamsMock = jest.fn();
+    mockUseSearchParams.mockReturnValue([
+      new URLSearchParams('detail=1'),
+      setSearchParamsMock,
+    ]);
+
+    render(
+      <BrowserRouter>
+        <Provider store={store}>
+          <table>
+            <tbody>
+              <Card item={mockPlanetItem} />
+            </tbody>
+          </table>
+        </Provider>
+      </BrowserRouter>
+    );
+
+    const rowElement = screen.getByText('Tatooine').closest('tr');
+    if (rowElement) {
+      fireEvent.click(rowElement);
+    }
+
+    expect(setSearchParamsMock).toHaveBeenCalledWith(new URLSearchParams(''));
+  });
+
+  const renderCard = (selectedPlanets: Record<string, PlanetItem>) => {
+    mockUseAppSelector.mockReturnValue(selectedPlanets);
+
+    const store = configureStore({
+      reducer: {
+        planet: () => ({ selectedPlanets }),
+      },
+    });
+
+    return render(
+      <BrowserRouter>
+        <Provider store={store}>
+          <table>
+            <tbody>
+              <Card item={mockPlanetItem} />
+            </tbody>
+          </table>
+        </Provider>
+      </BrowserRouter>
+    );
+  };
+
+  test('checkbox is checked if the planet is selected', () => {
+    const selectedPlanets = {
+      Tatooine: mockPlanetItem,
+    };
+
+    renderCard(selectedPlanets);
+
+    const checkbox = screen.getByRole('checkbox');
+    expect(checkbox).toBeChecked();
+  });
+
+  test('checkbox is unchecked if the planet is not selected', () => {
+    const selectedPlanets = {};
+
+    renderCard(selectedPlanets);
+
+    const checkbox = screen.getByRole('checkbox');
+    expect(checkbox).not.toBeChecked();
+  });
+
+  test('dispatches addPlanetToSelected when checkbox is checked', () => {
+    const selectedPlanets = {};
+
+    renderCard(selectedPlanets);
+
+    const checkbox = screen.getByRole('checkbox');
+    fireEvent.click(checkbox);
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      addPlanetToSelected({ planet: mockPlanetItem })
+    );
+  });
+
+  test('dispatches removePlanetFromSelected when checkbox is unchecked', () => {
+    const selectedPlanets = {
+      Tatooine: mockPlanetItem,
+    };
+
+    renderCard(selectedPlanets);
+
+    const checkbox = screen.getByRole('checkbox');
+    fireEvent.click(checkbox);
+
+    expect(mockDispatch).toHaveBeenCalledWith(
+      removePlanetFromSelected({ name: mockPlanetItem.name })
+    );
   });
 });

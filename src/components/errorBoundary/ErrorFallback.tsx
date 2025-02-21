@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
-import { Path } from '../Routing.tsx';
-import { Button } from '../button/Button.tsx';
+import { Path } from '../Routing';
+import { Button } from '../button/Button';
 
 export const ErrorFallback = ({ resetError }: { resetError: () => void }) => {
   const navigate = useNavigate();

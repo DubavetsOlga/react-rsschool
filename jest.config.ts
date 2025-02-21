@@ -12,6 +12,8 @@ export default {
   },
   collectCoverageFrom: [
     '**/*.tsx',
+    '!**/*.config.ts',
+    '!**/*.d.ts',
     '!**/node_modules/**',
     '!**/*.test.tsx',
     '!**/*.spec.tsx',
