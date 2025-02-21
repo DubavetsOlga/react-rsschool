@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Routing } from '../components/Routing';
+import { Routing } from '../app/Routing';
 import { MemoryRouter } from 'react-router';
 import '@testing-library/jest-dom';
 

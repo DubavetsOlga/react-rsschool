@@ -1,5 +1,6 @@
 import { Component, ReactNode } from 'react';
 import { ErrorFallback } from './ErrorFallback';
+import s from './style.module.css';
 
 type ErrorBoundaryProps = {
   children: ReactNode;
@@ -41,7 +42,7 @@ export class ErrorBoundary extends Component<
       return (
         <>
           {fallback || (
-            <div style={{ padding: '20px', textAlign: 'center' }}>
+            <div className={s.container}>
               <h1>Something went wrong.</h1>
               <p>{error?.message}</p>
             </div>

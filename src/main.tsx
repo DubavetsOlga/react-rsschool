@@ -1,8 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import App from './App';
-import { ErrorBoundary } from './components/errorBoundary/ErrorBoundary';
+import App from './app/App';
+import { ErrorBoundary } from './components';
 import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import { store } from './api/store';

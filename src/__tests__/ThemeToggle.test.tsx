@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { THEMES } from '../context/constants';
-import { ThemeToggle } from '../components/themeToggle/ThemeToggle';
-import { ThemeContext } from '../context/ThemeContext';
+import { THEMES } from '../app/context/constants';
+import { ThemeToggle } from '../components';
+import { ThemeContext } from '../app/context/ThemeContext';
 import { ReactNode } from 'react';
 import '@testing-library/jest-dom';
 

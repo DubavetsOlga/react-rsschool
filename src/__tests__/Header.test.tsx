@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Header } from '../components/header/Header';
+import { Header } from '../components';
 import '@testing-library/jest-dom';
 
 jest.mock('../components/themeToggle/ThemeToggle', () => ({

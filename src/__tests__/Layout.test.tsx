@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom'; // Fix import
-import { Layout } from '../components/layout/Layout';
+import { BrowserRouter } from 'react-router';
+import { Layout } from '../components';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import fetchMock from 'jest-fetch-mock';

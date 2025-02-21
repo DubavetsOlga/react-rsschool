@@ -1,10 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
-import { CardList } from '../components/cardList/CardList';
+import { CardList } from '../components';
 import { configureStore } from '@reduxjs/toolkit';
 import { useGetPlanetsQuery } from '../api/planets/planetsApi';
-import { appReducer, appSlice } from '../api/appSlice';
 import { planetReducer, planetSlice } from '../api/planets/planetSlice';
 import '@testing-library/jest-dom';
 
@@ -27,7 +26,6 @@ jest.mock('react-router', () => ({
 
 const store = configureStore({
   reducer: {
-    [appSlice.name]: appReducer,
     [planetSlice.name]: planetReducer,
   },
 });

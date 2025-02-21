@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Route, Routes, useSearchParams } from 'react-router';
-import { Pagination } from '../components/pagination/Pagination';
+import { Pagination } from '../components';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),

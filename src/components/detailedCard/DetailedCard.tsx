@@ -3,10 +3,10 @@ import { useSearchParams, useNavigate } from 'react-router';
 import { Button } from '../button/Button';
 import { Spinner } from '../spinner/Spinner';
 import s from './style.module.css';
-import { Path } from '../Routing';
+import { Path } from '../../app/Routing';
 import { useGetPlanetByIdQuery } from '../../api/planets/planetsApi';
-import { THEMES } from '../../context/constants';
-import { ThemeContext } from '../../context/ThemeContext';
+import { THEMES } from '../../app/context/constants';
+import { ThemeContext } from '../../app/context/ThemeContext';
 
 export const DetailedCard = () => {
   const navigate = useNavigate();

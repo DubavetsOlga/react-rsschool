@@ -1,7 +1,5 @@
 import { Route, Routes } from 'react-router';
-import { DetailedCard } from './detailedCard/DetailedCard';
-import { Page404 } from './page404/Page404';
-import { Layout } from './layout/Layout';
+import { DetailedCard, Layout, Page404 } from '../components';
 
 export const Path = {
   Main: '/',

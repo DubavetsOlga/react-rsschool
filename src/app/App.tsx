@@ -1,6 +1,6 @@
-import { Routing } from './components/Routing';
+import { Routing } from './Routing';
 import { Theme } from './context/Theme';
-import { Header } from './components/header/Header';
+import { Header } from '../components';
 
 const App = () => {
   return (

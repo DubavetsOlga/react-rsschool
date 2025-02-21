@@ -5,14 +5,14 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Card } from '../card/Card';
-import s from './style.module.css';
+import { useSearchParams } from 'react-router';
 import { Spinner } from '../spinner/Spinner';
 import { Pagination } from '../pagination/Pagination';
-import { useSearchParams } from 'react-router';
+import { Card } from '../card/Card';
 import { useGetPlanetsQuery } from '../../api/planets/planetsApi';
-import { THEMES } from '../../context/constants';
-import { ThemeContext } from '../../context/ThemeContext';
+import { THEMES } from '../../app/context/constants';
+import { ThemeContext } from '../../app/context/ThemeContext';
+import s from './style.module.css';
 
 const ITEMS_PER_PAGE = 10;
 

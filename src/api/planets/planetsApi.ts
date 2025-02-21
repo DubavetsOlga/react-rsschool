@@ -26,4 +26,3 @@ export const planetsApi = baseApi.injectEndpoints({
 });
 
 export const { useGetPlanetsQuery, useGetPlanetByIdQuery } = planetsApi;
-export const { reducer } = planetsApi;

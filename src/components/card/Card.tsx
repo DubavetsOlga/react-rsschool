@@ -7,8 +7,8 @@ import {
   addPlanetToSelected,
 } from '../../api/planets/planetSlice';
 import { PlanetItem } from '../../api/planets/planetsApi.types';
-import s from './style.module.css';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
+import s from './style.module.css';
 
 export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
   const [searchParams, setSearchParams] = useSearchParams();

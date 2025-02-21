@@ -1,0 +1,16 @@
+.lightThemeContainer {
+  --background: #dbd3c9;
+  --primary-color: #88a0a8;
+  --second-color: #546a76;
+}
+
+.darkThemeContainer {
+  --background: #4e4d5c;
+  --primary-color: #243b4a;
+  --second-color: #805e73;
+}
+
+.themeContainer {
+  min-height: 100vh;
+  background-color: var(--background);
+}

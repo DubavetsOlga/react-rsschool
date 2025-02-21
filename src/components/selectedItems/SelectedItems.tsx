@@ -5,18 +5,18 @@ import { removeAllPlanetsFromSelected } from '../../api/planets/planetSlice';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { saveAs } from 'file-saver';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { THEMES } from '../../context/constants';
-import { ThemeContext } from '../../context/ThemeContext';
+import { THEMES } from '../../app/context/constants';
+import { ThemeContext } from '../../app/context/ThemeContext';
 
 export const SelectedItems = () => {
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
 
   const dispatch = useAppDispatch();
+
   const selectedPlanets = useAppSelector(
     (state) => state.planet.selectedPlanets
   );
-
   const selectedCount = Object.keys(selectedPlanets).length;
 
   const handleClickDeleteSelected = () => {

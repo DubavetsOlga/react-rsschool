@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { Path } from '../Routing';
+import { Path } from '../../app/Routing';
 import { Button } from '../button/Button';
 
 export const ErrorFallback = ({ resetError }: { resetError: () => void }) => {
@@ -10,9 +10,5 @@ export const ErrorFallback = ({ resetError }: { resetError: () => void }) => {
     resetError();
   };
 
-  return (
-    <Button onClick={handleGoHome} style={{ marginTop: '10px' }}>
-      Retry
-    </Button>
-  );
+  return <Button onClick={handleGoHome}>Retry</Button>;
 };

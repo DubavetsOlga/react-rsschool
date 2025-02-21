@@ -1,4 +1,3 @@
-import { appReducer, appSlice } from './appSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { planetsApi } from './planets/planetsApi';
@@ -7,7 +6,6 @@ import { planetReducer, planetSlice } from './planets/planetSlice';
 
 export const store = configureStore({
   reducer: {
-    [appSlice.name]: appReducer,
     [planetSlice.name]: planetReducer,
     [planetsApi.reducerPath]: planetsApi.reducer,
   },

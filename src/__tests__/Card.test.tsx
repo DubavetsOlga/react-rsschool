@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter, useNavigate, useSearchParams } from 'react-router';
-import { Card } from '../components/card/Card';
+import { Card } from '../components';
 import '@testing-library/jest-dom';
 import { PlanetItem } from '../api/planets/planetsApi.types';
 import { configureStore } from '@reduxjs/toolkit';
@@ -11,7 +11,6 @@ import {
   removePlanetFromSelected,
 } from '../api/planets/planetSlice';
 import { Provider } from 'react-redux';
-import { appReducer, appSlice } from '../api/appSlice';
 import { planetsApi } from '../api/planets/planetsApi';
 import { useAppSelector } from '../hooks/useAppSelector';
 import { useAppDispatch } from '../hooks/useAppDispatch';
@@ -29,7 +28,6 @@ const mockUseSearchParams = useSearchParams as jest.Mock;
 
 const store = configureStore({
   reducer: {
-    [appSlice.name]: appReducer,
     [planetSlice.name]: planetReducer,
     [planetsApi.reducerPath]: planetsApi.reducer,
   },
@@ -61,7 +59,6 @@ describe('Card Component', () => {
     jest.clearAllMocks();
     mockUseAppDispatch.mockReturnValue(mockDispatch);
     mockUseAppSelector.mockReturnValue({});
-    //mockNavigate.mockClear();
     mockNavigate.mockReturnValue(jest.fn());
   });
 
