@@ -1,34 +1,54 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { DetailedCard } from '../components';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { useGetPlanetByIdQuery } from '../api/planets/planetsApi';
+import { planetReducer, planetSlice } from '../api/planets/planetSlice';
 import { useNavigate, useSearchParams } from 'react-router';
 import '@testing-library/jest-dom';
-import { useFetchPlanets } from '../hooks/useFetchPlanets';
-import { DetailedCard } from '../components/detailedCard/DetailedCard';
 
-jest.mock('../hooks/useFetchPlanets');
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),
   useSearchParams: jest.fn(),
 }));
+jest.mock('../api/planets/planetsApi', () => ({
+  useGetPlanetByIdQuery: jest.fn(),
+}));
+
+const store = configureStore({
+  reducer: {
+    [planetSlice.name]: planetReducer,
+  },
+});
 
 describe('DetailedCard Component', () => {
+  const mockUseGetPlanetByIdQuery = useGetPlanetByIdQuery as jest.Mock;
   const mockNavigate = useNavigate as jest.Mock;
   const mockUseSearchParams = useSearchParams as jest.Mock;
 
   beforeEach(() => {
-    mockNavigate.mockClear();
-    mockNavigate.mockReturnValue(mockNavigate);
-    mockUseSearchParams.mockReturnValue([new URLSearchParams()]);
+    jest.clearAllMocks();
+    mockNavigate.mockImplementation(() => jest.fn());
+    mockUseSearchParams.mockReturnValue([new URLSearchParams(''), jest.fn()]);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('renders a loading spinner when data is loading', () => {
-    (useFetchPlanets as jest.Mock).mockReturnValue({
-      result: {},
-      loading: true,
-      error: null,
+    mockUseGetPlanetByIdQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: undefined,
     });
 
-    const { container } = render(<DetailedCard />);
+    const { container } = render(
+      <Provider store={store}>
+        <DetailedCard />
+      </Provider>
+    );
 
     const loaderElement = container.querySelector('.loader');
     expect(loaderElement).toBeInTheDocument();
@@ -48,15 +68,19 @@ describe('DetailedCard Component', () => {
       population: '7 billion',
     };
 
-    (useFetchPlanets as jest.Mock).mockReturnValue({
-      result: mockData,
-      loading: false,
-      error: null,
+    mockUseGetPlanetByIdQuery.mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      error: undefined,
     });
 
-    render(<DetailedCard />);
+    render(
+      <Provider store={store}>
+        <DetailedCard />
+      </Provider>
+    );
 
-    expect(screen.getByText('Name: Earth')).toBeInTheDocument();
+    expect(await screen.findByText('Name: Earth')).toBeInTheDocument();
     expect(screen.getByText('Rotation Period: 24 hours')).toBeInTheDocument();
     expect(screen.getByText('Orbital Period: 365 days')).toBeInTheDocument();
     expect(screen.getByText('Diameter: 12742 km')).toBeInTheDocument();
@@ -68,15 +92,19 @@ describe('DetailedCard Component', () => {
   });
 
   it('displays error message if there is an error', () => {
-    (useFetchPlanets as jest.Mock).mockReturnValue({
-      result: {},
-      loading: false,
-      error: 'Error fetching data',
+    mockUseGetPlanetByIdQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: { details: 'Not found' },
     });
 
-    render(<DetailedCard />);
+    render(
+      <Provider store={store}>
+        <DetailedCard />
+      </Provider>
+    );
 
-    expect(screen.getByText('Error: Error fetching data')).toBeInTheDocument();
+    expect(screen.getByText('Not found')).toBeInTheDocument();
   });
 
   it('calls navigate to close details when the close button is clicked', async () => {
@@ -92,19 +120,25 @@ describe('DetailedCard Component', () => {
       population: '7 billion',
     };
 
-    (useFetchPlanets as jest.Mock).mockReturnValue({
-      result: mockData,
-      loading: false,
-      error: null,
+    mockUseGetPlanetByIdQuery.mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      error: undefined,
     });
 
-    render(<DetailedCard />);
+    const navigateMock = jest.fn();
+    mockNavigate.mockImplementation(() => navigateMock);
+
+    render(
+      <Provider store={store}>
+        <DetailedCard />
+      </Provider>
+    );
 
     const closeButton = screen.getByText('Close Details');
-
     fireEvent.click(closeButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith({
+    expect(navigateMock).toHaveBeenCalledWith({
       pathname: '/',
       search: '',
     });

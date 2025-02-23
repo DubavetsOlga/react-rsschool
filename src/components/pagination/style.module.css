@@ -11,19 +11,18 @@
 
 .page_link {
   padding: 5px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #616283;
+  border: none;
+  background-color: var(--primary-color);
   color: #e7e6f7;
   cursor: pointer;
 }
 
 .page_item.active .page_link {
-  background-color: #6200ea;
+  background-color: var(--second-color);
   color: #fff;
   border-color: #6200ea;
 }
 
 .page_link:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }

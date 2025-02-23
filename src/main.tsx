@@ -1,9 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import App from './App';
-import { ErrorBoundary } from './components/ErrorBoundary';
+import App from './app/App';
+import { ErrorBoundary } from './components';
 import { BrowserRouter } from 'react-router';
+import { Provider } from 'react-redux';
+import { store } from './api/store';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -12,10 +14,14 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <ErrorBoundary fallback={<h3>Something went wrong. Please try again.</h3>}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ErrorBoundary>
+    <BrowserRouter>
+      <ErrorBoundary
+        fallback={<h3>Something went wrong. Please try again.</h3>}
+      >
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </ErrorBoundary>
+    </BrowserRouter>
   </StrictMode>
 );

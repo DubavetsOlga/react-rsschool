@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Search } from '../components/search/Search';
+import { Search } from '../components';
 import {
   BrowserRouter,
   MemoryRouter,
@@ -8,11 +8,18 @@ import {
   Routes,
   useSearchParams,
 } from 'react-router';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { planetReducer } from '../api/planets/planetSlice';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useSearchParams: jest.fn(),
 }));
+
+const store = configureStore({
+  reducer: planetReducer,
+});
 
 describe('Search Component', () => {
   const mockSetSearchParams = jest.fn();
@@ -30,7 +37,9 @@ describe('Search Component', () => {
   it('renders the search input and button', () => {
     render(
       <BrowserRouter>
-        <Search />
+        <Provider store={store}>
+          <Search />
+        </Provider>
       </BrowserRouter>
     );
 
@@ -44,7 +53,9 @@ describe('Search Component', () => {
     mockGetSearchParams.set('search', 'initial search');
     render(
       <BrowserRouter>
-        <Search />
+        <Provider store={store}>
+          <Search />
+        </Provider>
       </BrowserRouter>
     );
 
@@ -74,11 +85,13 @@ it('should update search params and localStorage when search button is clicked',
   ]);
 
   render(
-    <MemoryRouter initialEntries={['/']}>
-      <Routes>
-        <Route path="/" element={<Search />} />
-      </Routes>
-    </MemoryRouter>
+    <Provider store={store}>
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<Search />} />
+        </Routes>
+      </MemoryRouter>
+    </Provider>
   );
 
   const input = screen.getByPlaceholderText('Enter search term');
@@ -99,7 +112,9 @@ it('should update search params and localStorage when search button is clicked',
 it('should clear search param if input is empty and search button is clicked', () => {
   render(
     <MemoryRouter initialEntries={['/?search=test%20search']}>
-      <Search />
+      <Provider store={store}>
+        <Search />
+      </Provider>
     </MemoryRouter>
   );
 

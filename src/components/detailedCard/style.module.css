@@ -1,11 +1,13 @@
 .details {
   width: 100%;
   min-width: 400px;
+  max-width: 500px;
   height: fit-content;
   border-collapse: collapse;
   padding: 0 14px 14px;
   margin: 20px 0;
   font-family: Arial, sans-serif;
+  color: black;
   background-color: #f9f9f9;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
@@ -14,4 +16,8 @@
 
 .title {
   text-align: center;
+}
+
+.darkTheme.details {
+  background-color: #b4c2cc;
 }

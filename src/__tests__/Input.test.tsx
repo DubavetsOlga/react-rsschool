@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Input } from '../components/input/Input';
+import { Input } from '../components';
 import '@testing-library/jest-dom';
 
 describe('Input component', () => {
