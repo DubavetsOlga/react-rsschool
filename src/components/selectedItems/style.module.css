@@ -19,3 +19,7 @@
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
   color: white;
 }
+
+.invisible {
+  display: none;
+}

@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { saveAs } from 'file-saver';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useAppSelector } from '../hooks/useAppSelector';
 import { SelectedItems } from '../components';
@@ -9,9 +8,9 @@ import { removeAllPlanetsFromSelected } from '../api/planets/planetSlice';
 
 jest.mock('../hooks/useAppSelector');
 jest.mock('../hooks/useAppDispatch');
-jest.mock('file-saver', () => ({
-  saveAs: jest.fn(),
-}));
+
+global.URL.createObjectURL = jest.fn(() => 'mock-url');
+global.URL.revokeObjectURL = jest.fn();
 
 describe('SelectedItems', () => {
   const mockDispatch = jest.fn();
@@ -123,8 +122,12 @@ describe('SelectedItems', () => {
     const downloadButton = screen.getByText('Download');
     fireEvent.click(downloadButton);
 
-    expect(saveAs).toHaveBeenCalledWith(
-      expect.any(Blob),
+    expect(global.URL.createObjectURL).toHaveBeenCalledWith(expect.any(Blob));
+
+    const hiddenLink = screen.getByText('Download link').closest('a');
+    expect(hiddenLink).toHaveAttribute('href', 'mock-url');
+    expect(hiddenLink).toHaveAttribute(
+      'download',
       expect.stringContaining('_planets.csv')
     );
   });

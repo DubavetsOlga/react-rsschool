@@ -1,9 +1,8 @@
 import { Button } from '../button/Button';
 import s from './style.module.css';
-import { useContext } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { removeAllPlanetsFromSelected } from '../../api/planets/planetSlice';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { saveAs } from 'file-saver';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { THEMES } from '../../app/context/constants';
 import { ThemeContext } from '../../app/context/ThemeContext';
@@ -11,6 +10,8 @@ import { ThemeContext } from '../../app/context/ThemeContext';
 export const SelectedItems = () => {
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
+  const [downloadUrl, setDownloadUrl] = useState('');
+  const downloadRef = useRef<HTMLAnchorElement>(null);
 
   const dispatch = useAppDispatch();
 
@@ -47,11 +48,21 @@ export const SelectedItems = () => {
       ],
       ...rows,
     ]
-      .map((row) => row.join(','))
+      .map((row) => row.join(';'))
       .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, `${selectedCount}_planets.csv`);
+    const url = URL.createObjectURL(blob);
+
+    setDownloadUrl(url);
+
+    setTimeout(() => {
+      if (downloadRef.current) {
+        downloadRef.current.click();
+        URL.revokeObjectURL(url);
+        setDownloadUrl('');
+      }
+    }, 0);
   };
 
   if (selectedCount === 0) {
@@ -65,6 +76,14 @@ export const SelectedItems = () => {
       {selectedCount} planets are selected
       <Button onClick={handleClickDeleteSelected}>Unselect all</Button>
       <Button onClick={handleClickCreateCSV}>Download</Button>
+      <a
+        ref={downloadRef}
+        href={downloadUrl}
+        download={`${selectedCount}_planets.csv`}
+        className={s.invisible}
+      >
+        Download link
+      </a>
     </div>
   );
 };
