@@ -1,12 +1,11 @@
-import { useNavigate } from 'react-router';
-import { Path } from '../../app/Routing';
+import { useRouter } from 'next/router';
 import { Button } from '../button/Button';
 
 export const ErrorFallback = ({ resetError }: { resetError: () => void }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleGoHome = () => {
-    navigate(Path.Main);
+    router.push('/');
     resetError();
   };
 

@@ -1,39 +1,40 @@
-import { useCallback, useContext, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router';
+import { FC, useContext } from 'react';
 import { Button } from '../button/Button';
 import { Spinner } from '../spinner/Spinner';
 import s from './style.module.css';
-import { Path } from '../../app/Routing';
-import { useGetPlanetByIdQuery } from '../../api/planets/planetsApi';
-import { THEMES } from '../../app/context/constants';
-import { ThemeContext } from '../../app/context/ThemeContext';
+import { THEMES } from '../../context/constants';
+import { ThemeContext } from '../../context/ThemeContext';
+import { PlanetItem } from '../../api/planetsApi.types';
+import { useRouter } from 'next/router';
 
-export const DetailedCard = () => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const detailId = searchParams.get('detail');
+type DetailedCardProps = {
+  planet: PlanetItem | null;
+  error: string | null;
+};
+
+const DetailedCard: FC<DetailedCardProps> = ({ planet, error }) => {
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
+  const router = useRouter();
 
-  const { data, isLoading, error } = useGetPlanetByIdQuery({
-    planetId: detailId || '',
-  });
-
-  const handleClickCloseDetails = useCallback(() => {
-    const newSearchParams = new URLSearchParams(searchParams);
+  const handleClickCloseDetails = () => {
+    const newSearchParams = new URLSearchParams(
+      router.query as Record<string, string>
+    );
     newSearchParams.delete('detail');
-
-    navigate({
-      pathname: Path.Main,
-      search: newSearchParams.toString(),
+    router.replace({
+      pathname: '/',
+      query: newSearchParams.toString(),
     });
-  }, [navigate, searchParams]);
+  };
 
-  useEffect(() => {
-    if (!detailId) {
-      handleClickCloseDetails();
-    }
-  }, [detailId, handleClickCloseDetails]);
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!planet) {
+    return <Spinner />;
+  }
 
   return (
     <div
@@ -44,21 +45,17 @@ export const DetailedCard = () => {
       <h3 id="detailed-card-title" className={s.title}>
         Planet Details
       </h3>
-      {error && <div>Not found</div>}
-      {isLoading && <Spinner />}
-      {!isLoading && data && (
-        <div>
-          <p>Name: {data.name}</p>
-          <p>Rotation Period: {data.rotation_period}</p>
-          <p>Orbital Period: {data.orbital_period}</p>
-          <p>Diameter: {data.diameter}</p>
-          <p>Climate: {data.climate}</p>
-          <p>Gravity: {data.gravity}</p>
-          <p>Terrain: {data.terrain}</p>
-          <p>Surface Water: {data.surface_water}</p>
-          <p>Population: {data.population}</p>
-        </div>
-      )}
+      <div>
+        <p>Name: {planet.name}</p>
+        <p>Rotation Period: {planet.rotation_period}</p>
+        <p>Orbital Period: {planet.orbital_period}</p>
+        <p>Diameter: {planet.diameter}</p>
+        <p>Climate: {planet.climate}</p>
+        <p>Gravity: {planet.gravity}</p>
+        <p>Terrain: {planet.terrain}</p>
+        <p>Surface Water: {planet.surface_water}</p>
+        <p>Population: {planet.population}</p>
+      </div>
       <Button
         onClick={handleClickCloseDetails}
         aria-label="Close detailed view"
@@ -68,3 +65,5 @@ export const DetailedCard = () => {
     </div>
   );
 };
+
+export default DetailedCard;

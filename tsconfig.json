@@ -9,7 +9,7 @@
     }
   ],
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "esModuleInterop": true,
     "module": "ESNext",
     "target": "ES6",
@@ -18,7 +18,24 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "resolveJsonModule": true,
-    "types": ["node", "jest"]
+    "baseUrl": ".",
+    "types": ["node", "jest"],
+    "paths": {
+      "@components/": ["components/"],
+      "@pages/": ["pages/"]
+    },
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["src/css.d.ts"]
+  "include": ["src/css.d.ts", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

@@ -1,11 +1,11 @@
 import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useContext, useRef, useState } from 'react';
-import { removeAllPlanetsFromSelected } from '../../api/planets/planetSlice';
+import { removeAllPlanetsFromSelected } from '../../api/planetSlice';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { THEMES } from '../../app/context/constants';
-import { ThemeContext } from '../../app/context/ThemeContext';
+import { THEMES } from '../../context/constants';
+import { ThemeContext } from '../../context/ThemeContext';
 
 export const SelectedItems = () => {
   const context = useContext(ThemeContext);

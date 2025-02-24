@@ -1,18 +1,17 @@
 import { ChangeEvent, ReactElement, MouseEvent } from 'react';
-import { useSearchParams, useNavigate } from 'react-router';
+import { useRouter } from 'next/router';
 import { getIdFromUrl } from '../../utils/getIdFromURL';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import {
   removePlanetFromSelected,
   addPlanetToSelected,
-} from '../../api/planets/planetSlice';
-import { PlanetItem } from '../../api/planets/planetsApi.types';
+} from '../../api/planetSlice.ts';
+import { PlanetItem } from '../../api/planetsApi.types.ts';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import s from './style.module.css';
 
 export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const router = useRouter();
   const dispatch = useAppDispatch();
 
   const selectedPlanets = useAppSelector(
@@ -29,18 +28,23 @@ export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
       return;
     }
 
-    const newSearchParams = new URLSearchParams(searchParams);
+    const newSearchParams = new URLSearchParams(
+      router.query as Record<string, string>
+    );
 
-    if (id === searchParams.get('detail')) {
+    if (id === router.query.detail) {
       newSearchParams.delete('detail');
-      setSearchParams(newSearchParams);
+      router.replace({
+        pathname: '/',
+        query: newSearchParams.toString(),
+      });
       return;
     }
 
     newSearchParams.set('detail', id);
-    navigate({
+    router.push({
       pathname: '/detailed',
-      search: newSearchParams.toString(),
+      query: newSearchParams.toString(),
     });
   };
 

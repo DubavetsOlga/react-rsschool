@@ -1,12 +1,17 @@
-import { useSearchParams } from 'react-router';
+'use client';
+
+import { useRouter } from 'next/router';
 
 export const useInitializeSearchParams = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
 
   return () => {
+    const searchParams = new URLSearchParams(window.location.search);
     const savedSearchValue = localStorage.getItem('searchValue');
+
     if (savedSearchValue && !searchParams.get('search')) {
-      setSearchParams({ search: savedSearchValue });
+      searchParams.set('search', savedSearchValue);
+      router.replace(`?${searchParams.toString()}`);
     }
   };
 };

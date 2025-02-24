@@ -1,19 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import { planetsApi } from './planets/planetsApi';
-import { baseApi } from './baseApi';
-import { planetReducer, planetSlice } from './planets/planetSlice';
+import { planetReducer } from './planetSlice';
 
-export const store = configureStore({
-  reducer: {
-    [planetSlice.name]: planetReducer,
-    [planetsApi.reducerPath]: planetsApi.reducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApi.middleware),
-});
+export const makeStore = () =>
+  configureStore({
+    reducer: {
+      planet: planetReducer,
+    },
+  });
 
-setupListeners(store.dispatch);
+export const store = makeStore();
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
