@@ -4,7 +4,7 @@ import { SelectedItems } from '../selectedItems/SelectedItems';
 import s from './style.module.css';
 import { ReactNode } from 'react';
 import { Header } from '../header/Header';
-import { ResponseType } from '../../api/planetsApi.types';
+import { ResponseType } from '../../common/types';
 
 type LayoutProps = {
   children?: ReactNode;

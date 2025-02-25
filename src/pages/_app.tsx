@@ -1,19 +1,13 @@
 import { Provider } from 'react-redux';
 import { AppProps } from 'next/app';
-import { makeStore } from '../api/store';
-import { Theme } from '../context/Theme';
-import '../global.css';
-import { ErrorBoundary } from '../components';
-import { useEffect, useState } from 'react';
+import { Theme } from '../common/context/Theme';
+import '../styles/global.css';
+import { ErrorBoundary, Spinner } from '../components';
+import { useLoadingState, useStoreInitialization } from '../common/hooks';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [store] = useState(() => makeStore());
-
-  useEffect(() => {
-    if (pageProps.initialReduxState) {
-      store.dispatch({ type: 'HYDRATE', payload: pageProps.initialReduxState });
-    }
-  }, [pageProps.initialReduxState, store]);
+  const loading = useLoadingState();
+  const store = useStoreInitialization(pageProps.initialReduxState);
 
   return (
     <Theme>
@@ -21,6 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         fallback={<h3>Something went wrong. Please try again.</h3>}
       >
         <Provider store={store}>
+          {loading && <Spinner />}
           <Component {...pageProps} />
         </Provider>
       </ErrorBoundary>

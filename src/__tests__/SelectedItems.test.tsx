@@ -1,13 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { useAppDispatch } from '../hooks/useAppDispatch';
-import { useAppSelector } from '../hooks/useAppSelector';
+import { useAppDispatch, useAppSelector } from '../common/hooks';
 import { SelectedItems } from '../components';
-import { Theme } from '../context/Theme';
-import { removeAllPlanetsFromSelected } from '../api/planetSlice';
+import { Theme } from '../common/context/Theme';
+import { removeAllPlanetsFromSelected } from '../common/store/planetSlice';
 
-jest.mock('../hooks/useAppSelector');
-jest.mock('../hooks/useAppDispatch');
+jest.mock('../common/hooks/useAppSelector');
+jest.mock('../common/hooks/useAppDispatch');
 
 global.URL.createObjectURL = jest.fn(() => 'mock-url');
 global.URL.revokeObjectURL = jest.fn();

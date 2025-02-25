@@ -3,8 +3,8 @@ import { Layout } from '../components';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import fetchMock from 'jest-fetch-mock';
-import { store } from '../api/store';
-import { ResponseType } from '../api/planetsApi.types.ts';
+import { store } from '../common/store/store.ts';
+import { ResponseType } from '../common/types.ts';
 
 fetchMock.enableMocks();
 

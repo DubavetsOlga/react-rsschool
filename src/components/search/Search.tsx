@@ -3,9 +3,8 @@ import { Input } from '../input/Input';
 import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useRouter } from 'next/router';
-import { useInitializeSearchParams } from '../../hooks/useInitializeSearchParams';
-import { removeAllPlanetsFromSelected } from '../../api/planetSlice';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppDispatch, useInitializeSearchParams } from '../../common/hooks';
+import { removeAllPlanetsFromSelected } from '../../common/store/planetSlice';
 
 export const Search = ({
   initialSearch,

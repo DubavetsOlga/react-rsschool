@@ -1,10 +1,10 @@
-import { FC, useContext } from 'react';
+import { useContext } from 'react';
 import { Button } from '../button/Button';
 import { Spinner } from '../spinner/Spinner';
 import s from './style.module.css';
-import { THEMES } from '../../context/constants';
-import { ThemeContext } from '../../context/ThemeContext';
-import { PlanetItem } from '../../api/planetsApi.types';
+import { THEMES } from '../../common/context/constants';
+import { ThemeContext } from '../../common/context/ThemeContext';
+import { PlanetItem } from '../../common/types';
 import { useRouter } from 'next/router';
 
 type DetailedCardProps = {
@@ -12,9 +12,8 @@ type DetailedCardProps = {
   error: string | null;
 };
 
-const DetailedCard: FC<DetailedCardProps> = ({ planet, error }) => {
-  const context = useContext(ThemeContext);
-  const theme = context ? context.theme : THEMES.LIGHT;
+export const DetailedCard = ({ planet, error }: DetailedCardProps) => {
+  const { theme = THEMES.LIGHT } = useContext(ThemeContext) || {};
   const router = useRouter();
 
   const handleClickCloseDetails = () => {
@@ -29,11 +28,46 @@ const DetailedCard: FC<DetailedCardProps> = ({ planet, error }) => {
   };
 
   if (error) {
-    return <div>{error}</div>;
+    return (
+      <div
+        className={`${s.details} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
+        role="dialog"
+        aria-labelledby="detailed-card-title"
+        aria-live="assertive"
+      >
+        <h3 id="detailed-card-title" className={s.title}>
+          Planet Details
+        </h3>
+        <div className={s.errorMessage}>{error}</div>
+        <Button
+          onClick={handleClickCloseDetails}
+          aria-label="Close detailed view"
+        >
+          Close Details
+        </Button>
+      </div>
+    );
   }
 
   if (!planet) {
-    return <Spinner />;
+    return (
+      <div
+        className={`${s.details} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
+        role="dialog"
+        aria-labelledby="detailed-card-title"
+      >
+        <h3 id="detailed-card-title" className={s.title}>
+          Planet Details
+        </h3>
+        <Spinner />
+        <Button
+          onClick={handleClickCloseDetails}
+          aria-label="Close detailed view"
+        >
+          Close Details
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -65,5 +99,3 @@ const DetailedCard: FC<DetailedCardProps> = ({ planet, error }) => {
     </div>
   );
 };
-
-export default DetailedCard;

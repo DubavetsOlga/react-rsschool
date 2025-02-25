@@ -1,4 +1,4 @@
-import s from './404.module.css';
+import s from '../styles/404.module.css';
 
 const Page404 = () => {
   return (

@@ -1,16 +1,15 @@
-import { ChangeEvent, ReactElement, MouseEvent } from 'react';
+import { ChangeEvent, MouseEvent } from 'react';
 import { useRouter } from 'next/router';
-import { getIdFromUrl } from '../../utils/getIdFromURL';
-import { useAppSelector } from '../../hooks/useAppSelector';
+import { getIdFromUrl } from '../../common/utils';
 import {
   removePlanetFromSelected,
   addPlanetToSelected,
-} from '../../api/planetSlice.ts';
-import { PlanetItem } from '../../api/planetsApi.types.ts';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
+} from '../../common/store/planetSlice';
+import { PlanetItem } from '../../common/types';
+import { useAppDispatch, useAppSelector } from '../../common/hooks';
 import s from './style.module.css';
 
-export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
+export const Card = ({ item }: { item: PlanetItem }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -34,18 +33,11 @@ export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
 
     if (id === router.query.detail) {
       newSearchParams.delete('detail');
-      router.replace({
-        pathname: '/',
-        query: newSearchParams.toString(),
-      });
-      return;
+      router.replace({ pathname: '/', query: newSearchParams.toString() });
+    } else {
+      newSearchParams.set('detail', id);
+      router.push({ pathname: '/detailed', query: newSearchParams.toString() });
     }
-
-    newSearchParams.set('detail', id);
-    router.push({
-      pathname: '/detailed',
-      query: newSearchParams.toString(),
-    });
   };
 
   const handleClickCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,9 +50,14 @@ export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
     }
   };
 
+  const isChecked = Object.prototype.hasOwnProperty.call(
+    selectedPlanets,
+    item.name
+  );
+
   return (
     <tr
-      onClick={(e) => handleClickDetail(e)}
+      onClick={handleClickDetail}
       role="button"
       aria-label={`View details of ${item.name}`}
       style={{ cursor: 'pointer' }}
@@ -69,11 +66,8 @@ export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
         <input
           type="checkbox"
           className={s.checkbox}
-          checked={Object.prototype.hasOwnProperty.call(
-            selectedPlanets,
-            item.name
-          )}
-          onChange={(e) => handleClickCheckbox(e)}
+          checked={isChecked}
+          onChange={handleClickCheckbox}
         />
       </td>
       <td className={s.name}>{item.name}</td>

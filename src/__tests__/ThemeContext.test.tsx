@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useContext } from 'react';
-import { ThemeContext } from '../context/ThemeContext';
+import { ThemeContext } from '../common/context/ThemeContext';
 import '@testing-library/jest-dom';
 
 describe('ThemeContext', () => {
