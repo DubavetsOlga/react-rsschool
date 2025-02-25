@@ -31,7 +31,7 @@ export const Card = ({ item }: { item: PlanetItem }) => {
       router.query as Record<string, string>
     );
 
-    if (id === router.query.detail) {
+    if (id === router.query?.detail) {
       newSearchParams.delete('detail');
       router.replace({ pathname: '/', query: newSearchParams.toString() });
     } else {

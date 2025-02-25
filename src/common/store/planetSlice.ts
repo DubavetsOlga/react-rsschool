@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PlanetItem } from '../types.ts';
+import { PlanetItem } from '../types';
 
 type PlanetState = {
   selectedPlanets: {
