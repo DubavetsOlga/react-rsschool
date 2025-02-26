@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import HomePage from '../pages/index';
 import { ResponseType } from '../common/types';
 
-jest.mock('../components/layout/Layout', () => ({
+jest.mock('../components/wrapper/Wrapper.tsx', () => ({
   Layout: jest.fn(({ planetsData }) => (
     <div>{planetsData ? 'Planets data available' : 'No data'}</div>
   )),
@@ -23,7 +23,7 @@ describe('HomePage', () => {
     expect(screen.getByText('No planets data available.')).toBeInTheDocument();
   });
 
-  it('should render Layout component if planetsData is provided', () => {
+  it('should render Wrapper component if planetsData is provided', () => {
     const mockPlanetsData: ResponseType = {
       count: 1,
       results: [

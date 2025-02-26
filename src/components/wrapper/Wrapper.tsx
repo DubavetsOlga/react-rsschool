@@ -8,17 +8,20 @@ import { ResponseType } from '../../common/types';
 
 type LayoutProps = {
   children?: ReactNode;
-  planetsData: ResponseType;
+  planetsData: ResponseType | null;
 };
 
-export const Layout = ({ children, planetsData }: LayoutProps) => {
+export const Wrapper = ({ children, planetsData }: LayoutProps) => {
   return (
     <div>
       <Header />
       <div className={s.layout}>
         <Search />
         <div className={s.container}>
-          <CardList results={planetsData?.results} count={planetsData?.count} />
+          <CardList
+            results={planetsData?.results || []}
+            count={planetsData?.count || 0}
+          />
           {children}
         </div>
         <SelectedItems />

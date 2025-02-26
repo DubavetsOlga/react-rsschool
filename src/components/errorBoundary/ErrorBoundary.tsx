@@ -1,3 +1,5 @@
+'use client';
+
 import { Component, ReactNode } from 'react';
 import { ErrorFallback } from './ErrorFallback';
 import s from './style.module.css';

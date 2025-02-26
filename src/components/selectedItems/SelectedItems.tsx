@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useContext, useRef, useState } from 'react';
@@ -46,7 +48,7 @@ export const SelectedItems = () => {
     <div
       className={`${s.selected} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
     >
-      {selectedCount} planets are selected
+      {selectedCount} planet{selectedCount > 1 ? 's' : ''} selected
       <Button onClick={handleClickDeleteSelected}>Unselect all</Button>
       <Button onClick={handleClickCreateCSV}>Download</Button>
       <a

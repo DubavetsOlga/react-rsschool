@@ -1,5 +1,7 @@
+'use client';
+
 import { ReactElement, useCallback, useContext } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Pagination } from '../pagination/Pagination';
 import { Card } from '../card/Card';
 import { THEMES } from '../../common/context/constants';
@@ -11,20 +13,18 @@ const ITEMS_PER_PAGE = 10;
 
 export const CardList = ({ results, count }: ResponseType): ReactElement => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const context = useContext(ThemeContext);
   const { theme = THEMES.LIGHT } = context || {};
 
   const handleClickPanel = useCallback(() => {
-    if (!router.query.detail) return;
+    if (!searchParams.has('detail')) return;
 
-    const newQuery = { ...router.query };
-    delete newQuery.detail;
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.delete('detail');
 
-    router.push({
-      pathname: '/',
-      query: newQuery,
-    });
-  }, [router]);
+    router.push(`/?${newSearchParams.toString()}`);
+  }, [router, searchParams]);
 
   if (!results?.length) return <p>No results found.</p>;
 

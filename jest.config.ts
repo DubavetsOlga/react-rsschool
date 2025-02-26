@@ -1,4 +1,4 @@
-const nextJest = require('next/jest');
+import nextJest from 'next/jest';
 
 module.exports = nextJest({
   dir: './',
@@ -22,5 +22,4 @@ module.exports = nextJest({
     '!**/*.spec.tsx',
     '!src/__tests__/setup.ts',
   ],
-  coverageReporters: ['text', 'lcov'],
 });

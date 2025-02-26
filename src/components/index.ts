@@ -5,7 +5,7 @@ export { DetailedCard } from './detailedCard/DetailedCard';
 export { ErrorBoundary } from './errorBoundary/ErrorBoundary';
 export { Header } from './header/Header';
 export { Input } from './input/Input';
-export { Layout } from './layout/Layout';
+export { Wrapper } from './wrapper/Wrapper.tsx';
 export { Pagination } from './pagination/Pagination';
 export { Search } from './search/Search';
 export { SelectedItems } from './selectedItems/SelectedItems';

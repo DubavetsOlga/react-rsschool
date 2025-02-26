@@ -1,17 +1,20 @@
 'use client';
 
-import { useRouter } from 'next/router';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 export const useInitializeSearchParams = () => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   return () => {
-    const searchParams = new URLSearchParams(window.location.search);
     const savedSearchValue = localStorage.getItem('searchValue');
 
     if (savedSearchValue && !searchParams.get('search')) {
-      searchParams.set('search', savedSearchValue);
-      router.replace(`?${searchParams.toString()}`);
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set('search', savedSearchValue);
+
+      router.push(`${pathname}?${newSearchParams.toString()}`);
     }
   };
 };

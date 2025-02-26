@@ -1,3 +1,5 @@
+'use client';
+
 import { useContext } from 'react';
 import { Button } from '../button/Button';
 import { Spinner } from '../spinner/Spinner';
@@ -5,7 +7,7 @@ import s from './style.module.css';
 import { THEMES } from '../../common/context/constants';
 import { ThemeContext } from '../../common/context/ThemeContext';
 import { PlanetItem } from '../../common/types';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type DetailedCardProps = {
   planet: PlanetItem | null;
@@ -15,16 +17,13 @@ type DetailedCardProps = {
 export const DetailedCard = ({ planet, error }: DetailedCardProps) => {
   const { theme = THEMES.LIGHT } = useContext(ThemeContext) || {};
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleClickCloseDetails = () => {
-    const newSearchParams = new URLSearchParams(
-      router.query as Record<string, string>
-    );
+    const newSearchParams = new URLSearchParams(searchParams.toString());
     newSearchParams.delete('detail');
-    router.replace({
-      pathname: '/',
-      query: newSearchParams.toString(),
-    });
+
+    router.push(`/?${newSearchParams.toString()}`);
   };
 
   if (error) {

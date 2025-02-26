@@ -1,8 +1,10 @@
+'use client';
+
 import { ReactElement, useEffect, useRef, useCallback } from 'react';
 import { Input } from '../input/Input';
 import { Button } from '../button/Button';
 import s from './style.module.css';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppDispatch, useInitializeSearchParams } from '../../common/hooks';
 import { removeAllPlanetsFromSelected } from '../../common/store/planetSlice';
 
@@ -13,6 +15,7 @@ export const Search = ({
 }): ReactElement => {
   const initializeSearchParams = useInitializeSearchParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
 
@@ -24,27 +27,24 @@ export const Search = ({
     const inputValue = inputRef.current?.value || '';
     localStorage.setItem('searchValue', inputValue);
 
-    const newQuery = { ...router.query };
+    const newSearchParams = new URLSearchParams(searchParams.toString());
     if (inputValue) {
-      newQuery.search = inputValue;
+      newSearchParams.set('search', inputValue);
     } else {
-      delete newQuery.search;
+      newSearchParams.delete('search');
     }
-    delete newQuery.page;
+    newSearchParams.delete('page');
 
-    router.replace({
-      pathname: '/',
-      query: newQuery,
-    });
+    router.push(`/?${newSearchParams.toString()}`);
 
     dispatch(removeAllPlanetsFromSelected());
-  }, [router, dispatch]);
+  }, [router, dispatch, searchParams]);
 
   return (
     <div className={s.search}>
       <Input
         ref={inputRef}
-        defaultValue={initialSearch || router.query.search || ''}
+        defaultValue={initialSearch || searchParams.get('search') || ''}
         placeholder="Enter search term"
         aria-label="Search input"
       />

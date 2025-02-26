@@ -1,5 +1,7 @@
+'use client';
+
 import { ReactElement, useMemo } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import s from './style.module.css';
 
 interface Props {
@@ -12,7 +14,9 @@ export const Pagination = ({
   totalItems,
 }: Props): ReactElement => {
   const router = useRouter();
-  const currentPage = router.query.page ?? '1'; // Get current page from the router query
+  const searchParams = useSearchParams();
+
+  const currentPage = searchParams.get('page') ?? '1';
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -21,17 +25,12 @@ export const Pagination = ({
   }, [totalPages]);
 
   const handleClick = (pageNumber: number): void => {
-    const newQuery: Record<string, string | string[] | undefined> = {
-      ...router.query,
-      page: pageNumber.toString(),
-    };
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('page', pageNumber.toString());
 
-    delete newQuery.detail;
+    newSearchParams.delete('detail');
 
-    router.push({
-      pathname: '/',
-      query: newQuery,
-    });
+    router.push(`/?${newSearchParams.toString()}`);
   };
 
   if (totalPages <= 1) return <></>;
@@ -42,9 +41,7 @@ export const Pagination = ({
         {pageNumbers.map((number) => (
           <li
             key={number}
-            className={`${s.page_item} ${
-              +currentPage === number ? s.active : ''
-            }`}
+            className={`${s.page_item} ${+currentPage === number ? s.active : ''}`}
             aria-current={+currentPage === number ? 'page' : undefined}
           >
             <button

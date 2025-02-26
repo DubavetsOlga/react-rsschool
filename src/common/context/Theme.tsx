@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, ReactNode } from 'react';
 import s from './style.module.css';
 import { THEMES } from './constants';

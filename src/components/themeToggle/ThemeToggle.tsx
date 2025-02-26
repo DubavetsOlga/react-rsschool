@@ -1,3 +1,5 @@
+'use client';
+
 import { useContext } from 'react';
 import { Button } from '../button/Button';
 import { THEMES } from '../../common/context/constants';

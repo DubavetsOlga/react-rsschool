@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { Store } from 'redux';
 import { makeStore } from '../store/store';

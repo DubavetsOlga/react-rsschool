@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import DetailedPage, { getServerSideProps } from '../pages/detailed';
+import DetailedPage, { getServerSideProps } from '../app/detailed/page.tsx';
 import { ResponseType, PlanetItem } from '../common/types';
 import { GetServerSidePropsContext } from 'next';
 import { getServerSidePropsDetailed } from '../common/utils';
