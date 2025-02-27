@@ -1,31 +1,39 @@
 import { Search } from '../search/Search';
-import { CardList } from '../cardList/CardList';
 import { SelectedItems } from '../selectedItems/SelectedItems';
 import s from './style.module.css';
-import { ReactNode } from 'react';
+import { memo, ReactNode, Suspense } from 'react';
 import { Header } from '../header/Header';
-import { ResponseType } from '../../common/types';
+import { CardListWrapper } from '../cardList/CardListWrapper';
+import { Spinner } from '../spinner/Spinner';
 
 type LayoutProps = {
   children?: ReactNode;
-  planetsData: ResponseType | null;
+  page?: string;
+  search?: string;
 };
 
-export const Wrapper = ({ children, planetsData }: LayoutProps) => {
+const WrapperComponent = ({
+  children,
+  page = '1',
+  search = '',
+}: LayoutProps) => {
   return (
     <div>
       <Header />
       <div className={s.layout}>
         <Search />
-        <div className={s.container}>
-          <CardList
-            results={planetsData?.results || []}
-            count={planetsData?.count || 0}
-          />
-          {children}
-        </div>
+        <Suspense fallback={<Spinner />}>
+          <div className={s.container}>
+            <CardListWrapper page={page} search={search} />
+            {children}
+          </div>
+        </Suspense>
         <SelectedItems />
       </div>
     </div>
   );
 };
+
+WrapperComponent.displayName = 'Wrapper';
+
+export const Wrapper = memo(WrapperComponent);

@@ -5,8 +5,8 @@
   height: 0;
 
   margin: 0;
-  position: sticky;
-  top: 50%;
+  position: relative;
+  top: 45vh;
 }
 
 .loader {

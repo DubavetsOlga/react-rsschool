@@ -1,5 +1,5 @@
 import { Wrapper, DetailedCard } from '../../components';
-import { PlanetItem, ResponseType } from '../../common/types';
+import { PlanetItem } from '../../common/types';
 import { fetchData } from '../../common/utils';
 
 const DetailedPage = async ({
@@ -9,13 +9,9 @@ const DetailedPage = async ({
 }) => {
   const { page = '1', search = '', detail } = await searchParams;
 
-  const resPlanetsList = await fetchData<ResponseType>(
-    `https://swapi.dev/api/planets/?search=${encodeURIComponent(search)}&page=${page}`
-  );
-
   if (!detail) {
     return (
-      <Wrapper planetsData={resPlanetsList}>
+      <Wrapper page={page} search={search}>
         <DetailedCard planet={null} error="Planet ID is missing" />
       </Wrapper>
     );
@@ -25,7 +21,7 @@ const DetailedPage = async ({
   const resPlanet = await fetchData<PlanetItem>(planetUrl);
 
   return (
-    <Wrapper planetsData={resPlanetsList}>
+    <Wrapper page={page} search={search}>
       <DetailedCard
         planet={resPlanet}
         error={resPlanet ? null : 'Planet not found'}
