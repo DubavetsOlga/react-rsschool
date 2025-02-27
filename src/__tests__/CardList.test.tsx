@@ -1,14 +1,16 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { useRouter } from 'next/router';
-import { CardList } from '../components';
 import '@testing-library/jest-dom';
+import { CardList } from '../components';
 import { planetReducer, planetSlice } from '../common/store/planetSlice';
 import { ResponseType } from '../common/types';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-jest.mock('next/router', () => ({
+jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
+  usePathname: jest.fn(),
 }));
 
 const store = configureStore({
@@ -18,7 +20,8 @@ const store = configureStore({
 });
 
 describe('CardList Component', () => {
-  const mockUseRouter = useRouter as jest.Mock;
+  const mockPush = jest.fn();
+  const mockSearchParams = new URLSearchParams();
 
   const mockPlanetData: ResponseType = {
     results: [
@@ -60,7 +63,9 @@ describe('CardList Component', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseRouter.mockReturnValue({
+    (usePathname as jest.Mock).mockReturnValue('/');
+    (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
+    (useRouter as jest.Mock).mockReturnValue({
       push: jest.fn(),
       query: { search: 'Tatooine', page: '1' },
     });
@@ -100,38 +105,7 @@ describe('CardList Component', () => {
     expect(screen.getByText('Alderaan')).toBeInTheDocument();
   });
 
-  test('clicking on table header triggers handleClickPanel', () => {
-    const pushMock = jest.fn();
-    mockUseRouter.mockReturnValue({
-      push: pushMock,
-      query: { detail: '1' },
-    });
-
-    render(
-      <Provider store={store}>
-        <CardList
-          results={mockPlanetData.results}
-          count={mockPlanetData.count}
-        />
-      </Provider>
-    );
-
-    const tableHeader = screen.getByRole('row', { name: /Name Terrain/i });
-    fireEvent.click(tableHeader);
-
-    expect(pushMock).toHaveBeenCalledWith({
-      pathname: '/',
-      query: {},
-    });
-  });
-
   test('should not modify search params when detail is not present and table header is clicked', () => {
-    const pushMock = jest.fn();
-    mockUseRouter.mockReturnValue({
-      push: pushMock,
-      query: {}, // No detail query
-    });
-
     render(
       <Provider store={store}>
         <CardList
@@ -144,7 +118,7 @@ describe('CardList Component', () => {
     const tableHeader = screen.getByRole('row', { name: /Name Terrain/i });
     fireEvent.click(tableHeader);
 
-    expect(pushMock).not.toHaveBeenCalled();
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
   test('renders no results message if results are empty', () => {

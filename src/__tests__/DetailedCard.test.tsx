@@ -4,10 +4,12 @@ import { configureStore } from '@reduxjs/toolkit';
 import '@testing-library/jest-dom';
 import { DetailedCard } from '../components';
 import { planetReducer, planetSlice } from '../common/store/planetSlice';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-jest.mock('next/router', () => ({
+jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
+  usePathname: jest.fn(),
 }));
 
 const mockPlanetData = {
@@ -34,13 +36,16 @@ const store = configureStore({
 });
 
 describe('DetailedCard Component', () => {
-  const mockUseRouter = useRouter as jest.Mock;
+  const mockPush = jest.fn();
+  const mockSearchParams = new URLSearchParams();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseRouter.mockReturnValue({
-      replace: jest.fn(),
-      query: { detail: '1' },
+    (usePathname as jest.Mock).mockReturnValue('/');
+    (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
+    (useRouter as jest.Mock).mockReturnValue({
+      query: {},
+      push: mockPush,
     });
   });
 
@@ -63,12 +68,6 @@ describe('DetailedCard Component', () => {
   });
 
   test('calls navigate to close details when the close button is clicked', async () => {
-    const navigateMock = jest.fn();
-    mockUseRouter.mockReturnValue({
-      replace: navigateMock,
-      query: { detail: '1' },
-    });
-
     render(
       <Provider store={store}>
         <DetailedCard planet={mockPlanetData} error={null} />
@@ -78,10 +77,7 @@ describe('DetailedCard Component', () => {
     const closeButton = screen.getByText('Close Details');
     fireEvent.click(closeButton);
 
-    expect(navigateMock).toHaveBeenCalledWith({
-      pathname: '/',
-      query: '',
-    });
+    expect(mockPush).toHaveBeenCalledWith('/?');
   });
 
   test('renders error message when there is an error', () => {

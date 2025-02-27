@@ -48,7 +48,7 @@ export const SelectedItems = () => {
     <div
       className={`${s.selected} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
     >
-      {selectedCount} planet{selectedCount > 1 ? 's' : ''} selected
+      {selectedCount} planets are selected
       <Button onClick={handleClickDeleteSelected}>Unselect all</Button>
       <Button onClick={handleClickCreateCSV}>Download</Button>
       <a

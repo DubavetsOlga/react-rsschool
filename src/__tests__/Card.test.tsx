@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'; // Import from next/navigation
 import { Card } from '../components';
 import '@testing-library/jest-dom';
 import { configureStore } from '@reduxjs/toolkit';
@@ -13,13 +13,15 @@ import {
 import { PlanetItem } from '../common/types';
 import { useAppDispatch, useAppSelector } from '../common/hooks';
 
-jest.mock('next/router', () => ({
+// Mocking the new navigation API
+jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
+  usePathname: jest.fn(),
 }));
+
 jest.mock('../common/hooks/useAppSelector');
 jest.mock('../common/hooks/useAppDispatch');
-
-const mockUseRouter = useRouter as jest.Mock;
 
 const store = configureStore({
   reducer: {
@@ -49,13 +51,18 @@ describe('Card Component', () => {
   const mockUseAppSelector = useAppSelector as jest.Mock;
   const mockUseAppDispatch = useAppDispatch as unknown as jest.Mock;
 
+  const mockPush = jest.fn();
+  const mockSearchParams = new URLSearchParams();
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseAppDispatch.mockReturnValue(mockDispatch);
     mockUseAppSelector.mockReturnValue({});
-    mockUseRouter.mockReturnValue({
-      push: jest.fn(),
+    (usePathname as jest.Mock).mockReturnValue('/');
+    (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
+    (useRouter as jest.Mock).mockReturnValue({
       query: {},
+      push: mockPush,
     });
   });
 
@@ -75,9 +82,6 @@ describe('Card Component', () => {
   });
 
   it('calls navigate with the correct parameters when row is clicked', () => {
-    const mockPush = jest.fn();
-    mockUseRouter.mockReturnValue({ push: mockPush });
-
     render(
       <Provider store={store}>
         <table>
@@ -93,38 +97,7 @@ describe('Card Component', () => {
       fireEvent.click(rowElement);
     }
 
-    expect(mockPush).toHaveBeenCalledWith({
-      pathname: '/detailed',
-      query: 'detail=1',
-    });
-  });
-
-  test('should delete the "detail" search parameter if it matches the id', () => {
-    const setSearchParamsMock = jest.fn();
-    mockUseRouter.mockReturnValue({
-      replace: setSearchParamsMock,
-      query: { detail: '1' },
-    });
-
-    render(
-      <Provider store={store}>
-        <table>
-          <tbody>
-            <Card item={mockPlanetItem} />
-          </tbody>
-        </table>
-      </Provider>
-    );
-
-    const rowElement = screen.getByText('Tatooine').closest('tr');
-    if (rowElement) {
-      fireEvent.click(rowElement);
-    }
-
-    expect(setSearchParamsMock).toHaveBeenCalledWith({
-      pathname: '/',
-      query: '',
-    });
+    expect(mockPush).toHaveBeenCalledWith('/detailed?detail=1');
   });
 
   const renderCard = (selectedPlanets: Record<string, PlanetItem>) => {

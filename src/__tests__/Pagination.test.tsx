@@ -4,10 +4,11 @@ import { Pagination } from '../components';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { planetReducer } from '../common/store/planetSlice';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-jest.mock('next/router', () => ({
+jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
 }));
 
 const store = configureStore({
@@ -16,13 +17,10 @@ const store = configureStore({
 
 describe('Pagination Component', () => {
   it('should render pagination buttons correctly based on totalItems and itemsPerPage', () => {
-    const setSearchParams = jest.fn();
-    (useRouter as jest.Mock).mockReturnValue({
-      query: { page: '1' },
-      push: setSearchParams,
-      replace: setSearchParams,
-      pathname: '/',
-    });
+    const mockNavigate = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue(mockNavigate);
+    const mockSearchParams = new URLSearchParams();
+    (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
 
     const totalItems = 50;
     const itemsPerPage = 10;
@@ -38,13 +36,10 @@ describe('Pagination Component', () => {
   });
 
   it('should not render pagination if there is only 1 page', () => {
-    const setSearchParams = jest.fn();
-    (useRouter as jest.Mock).mockReturnValue({
-      query: { page: '1' },
-      push: setSearchParams,
-      replace: setSearchParams,
-      pathname: '/',
-    });
+    const mockNavigate = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue(mockNavigate);
+    const mockSearchParams = new URLSearchParams();
+    (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
 
     render(
       <Provider store={store}>
@@ -59,14 +54,13 @@ describe('Pagination Component', () => {
   });
 
   it('should handle page click correctly', () => {
-    const setSearchParams = jest.fn();
-
+    const mockPush = jest.fn();
+    const mockSearchParams = new URLSearchParams();
     (useRouter as jest.Mock).mockReturnValue({
       query: { page: '1' },
-      push: setSearchParams,
-      replace: setSearchParams,
-      pathname: '/',
+      push: mockPush,
     });
+    (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
 
     render(
       <Provider store={store}>
@@ -77,13 +71,6 @@ describe('Pagination Component', () => {
     const page2Button = screen.getByText('2');
     fireEvent.click(page2Button);
 
-    expect(setSearchParams).toHaveBeenCalledWith(
-      expect.objectContaining({
-        pathname: '/',
-        query: expect.objectContaining({
-          page: '2',
-        }),
-      })
-    );
+    expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('?page=2'));
   });
 });
