@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useAppSelector } from '../hooks/useAppSelector';
 import { SelectedItems } from '../components';
-import { Theme } from '../app/context/Theme';
+import { Theme } from '../components/context/Theme';
 import { removeAllPlanetsFromSelected } from '../api/planets/planetSlice';
 
 jest.mock('../hooks/useAppSelector');

@@ -9,11 +9,16 @@ type ThemeProps = {
 
 export const Theme = ({ children }: ThemeProps) => {
   const [theme, setTheme] = useState<string>(() => {
+    if (typeof window === 'undefined') {
+      return THEMES.LIGHT;
+    }
     return JSON.parse(localStorage.getItem('theme') || 'null') || THEMES.LIGHT;
   });
 
   useEffect(() => {
-    localStorage.setItem('theme', JSON.stringify(theme));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme', JSON.stringify(theme));
+    }
   }, [theme]);
 
   return (

@@ -8,3 +8,5 @@ export const Spinner = (): ReactElement => {
     </div>
   );
 };
+
+export default Spinner;

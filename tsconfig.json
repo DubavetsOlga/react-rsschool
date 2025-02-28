@@ -18,7 +18,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "resolveJsonModule": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest", "@react-router/dev"]
   },
   "include": ["src/css.d.ts"]
 }
