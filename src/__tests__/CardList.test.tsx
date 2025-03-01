@@ -3,11 +3,11 @@ import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import { CardList } from '../components';
 import { configureStore } from '@reduxjs/toolkit';
-import { useGetPlanetsQuery } from '../api/planets/planetsApi';
-import { planetReducer, planetSlice } from '../api/planets/planetSlice';
+import { useGetPlanetsQuery } from '../store/planets/planetsApi';
+import { planetReducer, planetSlice } from '../store/planetSlice.ts';
 import '@testing-library/jest-dom';
 
-jest.mock('../api/planets/planetsApi', () => ({
+jest.mock('../store/planets/planetsApi', () => ({
   useGetPlanetsQuery: jest.fn(),
 }));
 

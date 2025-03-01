@@ -1,46 +1,19 @@
-import {
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-import { useSearchParams } from 'react-router';
-import { Spinner } from '../spinner/Spinner';
+import { ReactElement, useCallback, useContext } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Pagination } from '../pagination/Pagination';
 import { Card } from '../card/Card';
-import { useGetPlanetsQuery } from '../../api/planets/planetsApi';
 import { THEMES } from '../context/constants';
 import { ThemeContext } from '../context/ThemeContext';
 import s from './style.module.css';
+import { ResponseType } from '../../store/planetsApi.types.ts';
 
 const ITEMS_PER_PAGE = 10;
 
-export const CardList = (): ReactElement => {
-  const [errMsg, setErrMsg] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
-  const searchValue = searchParams.get('search') ?? '';
-  const currentPage = searchParams.get('page') ?? '1';
+export const CardList = ({ results, count }: ResponseType): ReactElement => {
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
 
-  const { data, isLoading, isFetching, error } = useGetPlanetsQuery({
-    page: currentPage,
-    searchValue,
-  });
-
-  useEffect(() => {
-    if (error) {
-      let errMsg = 'Some error occurred';
-      if ('data' in error) {
-        const errData = error.data as Error;
-        if ('message' in errData) {
-          errMsg = errData.message as string;
-        }
-      }
-      setErrMsg(errMsg);
-    }
-  }, [error]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleClickPanel = useCallback(() => {
     if (!searchParams.get('detail')) return;
@@ -50,9 +23,7 @@ export const CardList = (): ReactElement => {
     setSearchParams(newSearchParams);
   }, [searchParams, setSearchParams]);
 
-  if (isLoading || isFetching) return <Spinner />;
-  if (error) return <div>Error: {errMsg}</div>;
-  if (data?.results?.length === 0) return <p>No results found.</p>;
+  if (results?.length === 0) return <p>No results found.</p>;
 
   return (
     <div role="button" tabIndex={0} aria-label="Close detail view">
@@ -66,11 +37,9 @@ export const CardList = (): ReactElement => {
             <th>Terrain</th>
           </tr>
         </thead>
-        <tbody>
-          {data?.results?.map((el) => <Card key={el.url} item={el} />)}
-        </tbody>
+        <tbody>{results?.map((el) => <Card key={el.url} item={el} />)}</tbody>
       </table>
-      <Pagination itemsPerPage={ITEMS_PER_PAGE} totalItems={data?.count || 0} />
+      <Pagination itemsPerPage={ITEMS_PER_PAGE} totalItems={count || 0} />
     </div>
   );
 };

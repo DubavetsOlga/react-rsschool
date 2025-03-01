@@ -2,16 +2,16 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter, useNavigate, useSearchParams } from 'react-router';
 import { Card } from '../components';
 import '@testing-library/jest-dom';
-import { PlanetItem } from '../api/planets/planetsApi.types';
+import { PlanetItem } from '../store/planetsApi.types.ts';
 import { configureStore } from '@reduxjs/toolkit';
 import {
   addPlanetToSelected,
   planetReducer,
   planetSlice,
   removePlanetFromSelected,
-} from '../api/planets/planetSlice';
+} from '../store/planetSlice.ts';
 import { Provider } from 'react-redux';
-import { planetsApi } from '../api/planets/planetsApi';
+import { planetsApi } from '../store/planets/planetsApi';
 import { useAppSelector } from '../hooks/useAppSelector';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 

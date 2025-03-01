@@ -5,8 +5,8 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import {
   removePlanetFromSelected,
   addPlanetToSelected,
-} from '../../api/planets/planetSlice';
-import { PlanetItem } from '../../api/planets/planetsApi.types';
+} from '../../store/planetSlice.ts';
+import { PlanetItem } from '../../store/planetsApi.types.ts';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import s from './style.module.css';
 
@@ -38,10 +38,13 @@ export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
     }
 
     newSearchParams.set('detail', id);
-    navigate({
-      pathname: '/detailed',
-      search: newSearchParams.toString(),
-    });
+    navigate(
+      {
+        pathname: '/detailed',
+        search: newSearchParams.toString(),
+      },
+      { replace: true }
+    );
   };
 
   const handleClickCheckbox = (e: ChangeEvent<HTMLInputElement>) => {

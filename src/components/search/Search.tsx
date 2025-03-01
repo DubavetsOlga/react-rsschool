@@ -4,7 +4,7 @@ import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useSearchParams } from 'react-router';
 import { useInitializeSearchParams } from '../../hooks/useInitializeSearchParams';
-import { removeAllPlanetsFromSelected } from '../../api/planets/planetSlice';
+import { removeAllPlanetsFromSelected } from '../../store/planetSlice';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 
 export const Search = (): ReactElement => {
@@ -15,7 +15,7 @@ export const Search = (): ReactElement => {
 
   useEffect(() => {
     initializeSearchParams();
-  }, [initializeSearchParams]);
+  }, []);
 
   const handleClickSearch = useCallback((): void => {
     const inputValue = inputRef.current?.value || '';

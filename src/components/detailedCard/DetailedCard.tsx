@@ -1,25 +1,39 @@
-import { useCallback, useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { Button } from '../button/Button';
-import { Spinner } from '../spinner/Spinner';
 import s from './style.module.css';
 import { Path } from '../../app/Routing';
-import { useGetPlanetByIdQuery } from '../../api/planets/planetsApi';
 import { THEMES } from '../context/constants';
 import { ThemeContext } from '../context/ThemeContext';
+import { Route } from '../../../.react-router/types/src/+types/root';
+import { PlanetItem } from '../../store/planetsApi.types';
+import Spinner from '../spinner/Spinner';
 
-export const DetailedCard = () => {
+export async function loader({ request }: { request: Request }) {
+  const url = new URL(request.url);
+  const planetId = url.searchParams.get('detail') ?? '';
+
+  const res = await fetch(`https://swapi.dev/api/planets/${planetId}`);
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch planets');
+  }
+
+  return await res.json();
+}
+
+export const DetailedCard = ({ loaderData }: Route.ComponentProps) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const detailId = searchParams.get('detail');
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
 
-  const { data, isLoading, error } = useGetPlanetByIdQuery({
-    planetId: detailId || '',
-  });
+  if (!loaderData) return <Spinner />;
 
-  const handleClickCloseDetails = useCallback(() => {
+  const data: PlanetItem = loaderData;
+
+  const handleClickCloseDetails = () => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.delete('detail');
 
@@ -27,13 +41,11 @@ export const DetailedCard = () => {
       pathname: Path.Main,
       search: newSearchParams.toString(),
     });
-  }, [navigate, searchParams]);
+  };
 
-  useEffect(() => {
-    if (!detailId) {
-      handleClickCloseDetails();
-    }
-  }, [detailId, handleClickCloseDetails]);
+  if (!detailId) {
+    handleClickCloseDetails();
+  }
 
   return (
     <div
@@ -44,21 +56,17 @@ export const DetailedCard = () => {
       <h3 id="detailed-card-title" className={s.title}>
         Planet Details
       </h3>
-      {error && <div>Not found</div>}
-      {isLoading && <Spinner />}
-      {!isLoading && data && (
-        <div>
-          <p>Name: {data.name}</p>
-          <p>Rotation Period: {data.rotation_period}</p>
-          <p>Orbital Period: {data.orbital_period}</p>
-          <p>Diameter: {data.diameter}</p>
-          <p>Climate: {data.climate}</p>
-          <p>Gravity: {data.gravity}</p>
-          <p>Terrain: {data.terrain}</p>
-          <p>Surface Water: {data.surface_water}</p>
-          <p>Population: {data.population}</p>
-        </div>
-      )}
+      <div>
+        <p>Name: {data.name}</p>
+        <p>Rotation Period: {data.rotation_period}</p>
+        <p>Orbital Period: {data.orbital_period}</p>
+        <p>Diameter: {data.diameter}</p>
+        <p>Climate: {data.climate}</p>
+        <p>Gravity: {data.gravity}</p>
+        <p>Terrain: {data.terrain}</p>
+        <p>Surface Water: {data.surface_water}</p>
+        <p>Population: {data.population}</p>
+      </div>
       <Button
         onClick={handleClickCloseDetails}
         aria-label="Close detailed view"

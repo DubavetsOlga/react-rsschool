@@ -10,7 +10,7 @@ import {
 } from 'react-router';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import { planetReducer } from '../api/planets/planetSlice';
+import { planetReducer } from '../store/planetSlice.ts';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),

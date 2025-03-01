@@ -2,8 +2,8 @@ import { DetailedCard } from '../components';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { useGetPlanetByIdQuery } from '../api/planets/planetsApi';
-import { planetReducer, planetSlice } from '../api/planets/planetSlice';
+import { useGetPlanetByIdQuery } from '../store/planets/planetsApi';
+import { planetReducer, planetSlice } from '../store/planetSlice.ts';
 import { useNavigate, useSearchParams } from 'react-router';
 import '@testing-library/jest-dom';
 
@@ -12,7 +12,7 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(),
   useSearchParams: jest.fn(),
 }));
-jest.mock('../api/planets/planetsApi', () => ({
+jest.mock('../store/planets/planetsApi', () => ({
   useGetPlanetByIdQuery: jest.fn(),
 }));
 

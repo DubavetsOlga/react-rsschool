@@ -4,7 +4,7 @@ import { Layout } from '../components';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import fetchMock from 'jest-fetch-mock';
-import { store } from '../api/store';
+import { store } from '../store/store';
 
 fetchMock.enableMocks();
 

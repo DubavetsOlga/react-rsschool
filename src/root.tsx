@@ -1,8 +1,15 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useNavigation,
+} from 'react-router';
 import { ReactNode } from 'react';
-import { ErrorBoundary, Header } from './components';
+import { ErrorBoundary, Header, Spinner } from './components';
 import { Provider } from 'react-redux';
-import { store } from './api/store';
+import { store } from './store/store';
 import { Theme } from './components/context/Theme';
 import './index.css';
 
@@ -27,12 +34,16 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 
 export default function Root() {
+  const navigation = useNavigation();
+  const isNavigating = Boolean(navigation.location);
+
   return (
     <Theme>
       <ErrorBoundary
         fallback={<h3>Something went wrong. Please try again.</h3>}
       >
         <Provider store={store}>
+          {isNavigating && <Spinner />}
           <Header />
           <Outlet />
         </Provider>
