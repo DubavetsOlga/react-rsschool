@@ -52,7 +52,7 @@ describe('DetailedCard Component', () => {
   test('renders planet details when data is loaded', async () => {
     render(
       <Provider store={store}>
-        <DetailedCard planet={mockPlanetData} error={null} />
+        <DetailedCard planet={mockPlanetData} />
       </Provider>
     );
 
@@ -70,7 +70,7 @@ describe('DetailedCard Component', () => {
   test('calls navigate to close details when the close button is clicked', async () => {
     render(
       <Provider store={store}>
-        <DetailedCard planet={mockPlanetData} error={null} />
+        <DetailedCard planet={mockPlanetData} />
       </Provider>
     );
 
@@ -78,30 +78,5 @@ describe('DetailedCard Component', () => {
     fireEvent.click(closeButton);
 
     expect(mockPush).toHaveBeenCalledWith('/?');
-  });
-
-  test('renders error message when there is an error', () => {
-    const errorMessage = 'Planet not found';
-
-    render(
-      <Provider store={store}>
-        <DetailedCard planet={null} error={errorMessage} />
-      </Provider>
-    );
-
-    expect(screen.getByText('Planet Details')).toBeInTheDocument();
-    expect(screen.getByText(errorMessage)).toBeInTheDocument();
-    expect(screen.getByText('Close Details')).toBeInTheDocument();
-  });
-
-  test('renders without planet', () => {
-    render(
-      <Provider store={store}>
-        <DetailedCard planet={null} error={null} />
-      </Provider>
-    );
-
-    expect(screen.getByText('Planet Details')).toBeInTheDocument();
-    expect(screen.getByText('Close Details')).toBeInTheDocument();
   });
 });

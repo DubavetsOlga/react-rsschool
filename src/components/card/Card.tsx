@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, MouseEvent } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getIdFromUrl } from '../../common/utils';
 import {
   removePlanetFromSelected,
@@ -13,9 +13,7 @@ import s from './style.module.css';
 
 export const Card = ({ item }: { item: PlanetItem }) => {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
-
   const dispatch = useAppDispatch();
 
   const selectedPlanets = useAppSelector(
@@ -36,7 +34,7 @@ export const Card = ({ item }: { item: PlanetItem }) => {
 
     if (id === searchParams.get('detail')) {
       newSearchParams.delete('detail');
-      router.push(`${pathname}?${newSearchParams.toString()}`);
+      router.push(`/?${newSearchParams.toString()}`);
     } else {
       newSearchParams.set('detail', id);
       router.push(`/detailed?${newSearchParams.toString()}`);

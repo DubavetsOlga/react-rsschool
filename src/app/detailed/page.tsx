@@ -1,6 +1,7 @@
 import { Wrapper, DetailedCard } from '../../components';
 import { PlanetItem } from '../../common/types';
 import { fetchData } from '../../common/utils';
+import { redirect } from 'next/navigation';
 
 const DetailedPage = async ({
   searchParams,
@@ -9,23 +10,26 @@ const DetailedPage = async ({
 }) => {
   const { page = '1', search = '', detail } = await searchParams;
 
+  const queryParams = new URLSearchParams();
+  queryParams.set('page', page);
+  queryParams.set('search', search);
+  const redirectUrl = `/?${queryParams.toString()}`;
+
   if (!detail) {
-    return (
-      <Wrapper page={page} search={search}>
-        <DetailedCard planet={null} error="Planet ID is missing" />
-      </Wrapper>
-    );
+    redirect(redirectUrl);
   }
 
-  const planetUrl = `https://swapi.dev/api/planets/${detail}`;
-  const resPlanet = await fetchData<PlanetItem>(planetUrl);
+  const resPlanet = await fetchData<PlanetItem>(
+    `https://swapi.dev/api/planets/${detail}`
+  );
+
+  if (!resPlanet) {
+    redirect(redirectUrl);
+  }
 
   return (
     <Wrapper page={page} search={search}>
-      <DetailedCard
-        planet={resPlanet}
-        error={resPlanet ? null : 'Planet not found'}
-      />
+      <DetailedCard planet={resPlanet} />
     </Wrapper>
   );
 };

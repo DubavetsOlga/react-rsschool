@@ -32,6 +32,7 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
   useSearchParams: jest.fn(),
   usePathname: jest.fn(),
+  redirect: jest.fn(),
 }));
 
 jest.mock('react', () => ({
@@ -82,21 +83,6 @@ describe('DetailedPage', () => {
     );
   });
 
-  it('renders error message when planet ID is missing', async () => {
-    const searchParams = { detail: undefined };
-    (use as jest.Mock).mockReturnValue(null);
-
-    const Page = await DetailedPage({ searchParams });
-
-    render(
-      <Theme>
-        <Provider store={store}>{Page}</Provider>
-      </Theme>
-    );
-
-    expect(screen.getByText('Planet ID is missing')).toBeInTheDocument();
-  });
-
   it('fetches planet data and renders it when valid detail ID is passed', async () => {
     const searchParams = { detail: '1' };
     const mockPlanetData = { name: 'Tatooine', climate: 'arid' };
@@ -116,24 +102,5 @@ describe('DetailedPage', () => {
 
     expect(screen.getByText('Name: Tatooine')).toBeInTheDocument();
     expect(screen.getByText('Climate: arid')).toBeInTheDocument();
-  });
-
-  it('shows error when planet data is not found', async () => {
-    const searchParams = { detail: '1' };
-
-    (fetchData as jest.Mock).mockResolvedValue(null);
-    (use as jest.Mock).mockReturnValue(null);
-
-    const Page = await DetailedPage({ searchParams });
-
-    render(
-      <Theme>
-        <Provider store={store}>{Page}</Provider>
-      </Theme>
-    );
-
-    await waitFor(() => screen.getByText('Planet not found'));
-
-    expect(screen.getByText('Planet not found')).toBeInTheDocument();
   });
 });

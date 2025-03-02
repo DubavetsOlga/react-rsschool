@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'; // Import from next/navigation
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Card } from '../components';
 import '@testing-library/jest-dom';
 import { configureStore } from '@reduxjs/toolkit';
@@ -13,7 +13,6 @@ import {
 import { PlanetItem } from '../common/types';
 import { useAppDispatch, useAppSelector } from '../common/hooks';
 
-// Mocking the new navigation API
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
   useSearchParams: jest.fn(),

@@ -27,9 +27,7 @@ export const Pagination = ({
   const handleClick = (pageNumber: number): void => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
     newSearchParams.set('page', pageNumber.toString());
-
     newSearchParams.delete('detail');
-
     router.push(`/?${newSearchParams.toString()}`);
   };
 

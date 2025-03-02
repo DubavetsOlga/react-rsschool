@@ -21,7 +21,7 @@ export const Search = ({
 
   useEffect(() => {
     initializeSearchParams();
-  }, [initializeSearchParams]);
+  }, []);
 
   const handleClickSearch = useCallback((): void => {
     const inputValue = inputRef.current?.value || '';

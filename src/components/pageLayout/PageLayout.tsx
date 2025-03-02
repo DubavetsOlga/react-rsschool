@@ -1,9 +1,9 @@
 'use client';
 
-import { Theme } from '../common/context/Theme';
-import { ErrorBoundary } from '../components';
+import { Theme } from '../../common/context/Theme.tsx';
+import { ErrorBoundary } from '../index.ts';
 import { Provider } from 'react-redux';
-import { useStoreInitialization } from '../common/hooks';
+import { useStoreInitialization } from '../../common/hooks';
 import { ReactNode } from 'react';
 import { AppProps } from 'next/app';
 
