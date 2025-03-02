@@ -36,6 +36,6 @@ export const generateCSVContent = (
  */
 export const triggerDownload = (csvContent: string) => {
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  return url;
+
+  return URL.createObjectURL(blob);
 };
