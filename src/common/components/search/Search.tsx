@@ -1,9 +1,8 @@
 import { ReactElement, useEffect, useRef } from 'react';
-import { Input } from '../input/Input';
-import { Button } from '../button/Button';
-import s from './style.module.css';
+import { Input, Button } from '../index';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useInitializeSearchParams } from '../../hooks/useInitializeSearchParams';
+import s from './style.module.css';
 
 export const Search = (): ReactElement => {
   const initializeSearchParams = useInitializeSearchParams();

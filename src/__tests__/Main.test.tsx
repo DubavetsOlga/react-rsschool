@@ -9,7 +9,7 @@ fetchMock.enableMocks();
 
 jest.mock('../common/components/search/Search', () => {
   const MockSearch = () => <div>Search Component</div>;
-  MockSearch.displayName = 'Search'; // Set the displayName here
+  MockSearch.displayName = 'Search';
   return MockSearch;
 });
 
@@ -19,13 +19,13 @@ jest.mock('../common/components/cardList/CardList', () => {
       CardList Component - {results.length} items, {count} total
     </div>
   );
-  MockCardList.displayName = 'CardList'; // Set the displayName here
+  MockCardList.displayName = 'CardList';
   return MockCardList;
 });
 
 jest.mock('../common/components/selectedItems/SelectedItems', () => {
   const MockSelectedItems = () => <div>SelectedItems Component</div>;
-  MockSelectedItems.displayName = 'SelectedItems'; // Set the displayName here
+  MockSelectedItems.displayName = 'SelectedItems';
   return MockSelectedItems;
 });
 

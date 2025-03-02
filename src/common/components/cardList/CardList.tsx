@@ -4,8 +4,8 @@ import { Pagination } from '../pagination/Pagination';
 import { Card } from '../card/Card';
 import { THEMES } from '../context/constants';
 import { ThemeContext } from '../context/ThemeContext';
-import s from './style.module.css';
 import { ResponseType } from '../../../store/planetsApi.types';
+import s from './style.module.css';
 
 const ITEMS_PER_PAGE = 10;
 

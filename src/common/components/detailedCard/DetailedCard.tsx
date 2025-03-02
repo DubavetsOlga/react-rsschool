@@ -1,49 +1,44 @@
 import { useContext } from 'react';
-import { useSearchParams, useNavigate } from 'react-router';
+import { useSearchParams, useNavigate, redirect } from 'react-router';
 import { Button } from '../index';
-import s from './style.module.css';
 import { THEMES } from '../context/constants';
 import { ThemeContext } from '../context/ThemeContext';
 import { PlanetItem } from '../../../store/planetsApi.types';
-import Spinner from '../spinner/Spinner';
+import s from './style.module.css';
 
 export async function loader({ request }: { request: Request }) {
   const url = new URL(request.url);
   const planetId = url.searchParams.get('detail') ?? '';
-
   const res = await fetch(`https://swapi.dev/api/planets/${planetId}`);
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch planets');
+  if (!res.ok || planetId === '') {
+    const newUrl = new URL('/', url.origin);
+    url.searchParams.forEach((value, key) => {
+      if (key !== 'detail') {
+        newUrl.searchParams.set(key, value);
+      }
+    });
+
+    return redirect(newUrl.toString());
   }
 
   return await res.json();
 }
 
-export const DetailedCard = ({ loaderData }: { loaderData: PlanetItem }) => {
+const DetailedCard = ({ loaderData }: { loaderData: PlanetItem }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const detailId = searchParams.get('detail');
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
-
-  if (!loaderData || Object.keys(loaderData).length === 0) return <Spinner />;
-
-  const data: PlanetItem = loaderData;
 
   const handleClickCloseDetails = () => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.delete('detail');
-
     navigate({
       pathname: '/',
       search: newSearchParams.toString(),
     });
   };
-
-  if (!detailId) {
-    handleClickCloseDetails();
-  }
 
   return (
     <div
@@ -55,15 +50,15 @@ export const DetailedCard = ({ loaderData }: { loaderData: PlanetItem }) => {
         Planet Details
       </h3>
       <div>
-        <p>Name: {data.name}</p>
-        <p>Rotation Period: {data.rotation_period}</p>
-        <p>Orbital Period: {data.orbital_period}</p>
-        <p>Diameter: {data.diameter}</p>
-        <p>Climate: {data.climate}</p>
-        <p>Gravity: {data.gravity}</p>
-        <p>Terrain: {data.terrain}</p>
-        <p>Surface Water: {data.surface_water}</p>
-        <p>Population: {data.population}</p>
+        <p>Name: {loaderData.name}</p>
+        <p>Rotation Period: {loaderData.rotation_period}</p>
+        <p>Orbital Period: {loaderData.orbital_period}</p>
+        <p>Diameter: {loaderData.diameter}</p>
+        <p>Climate: {loaderData.climate}</p>
+        <p>Gravity: {loaderData.gravity}</p>
+        <p>Terrain: {loaderData.terrain}</p>
+        <p>Surface Water: {loaderData.surface_water}</p>
+        <p>Population: {loaderData.population}</p>
       </div>
       <Button
         onClick={handleClickCloseDetails}

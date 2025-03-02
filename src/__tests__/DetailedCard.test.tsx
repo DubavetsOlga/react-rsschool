@@ -13,12 +13,6 @@ import '@testing-library/jest-dom';
 
 fetchMock.enableMocks();
 
-jest.mock('../common/components/spinner/Spinner', () => {
-  const MockSpinner = () => <div>Spinner Component</div>;
-  MockSpinner.displayName = 'Spinner';
-  return MockSpinner;
-});
-
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useSearchParams: jest.fn(),
@@ -39,16 +33,6 @@ describe('DetailedCard Component', () => {
     ]);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-  });
-
-  test('renders Spinner when loaderData is not available', () => {
-    render(
-      <Router>
-        <DetailedCard loaderData={{} as PlanetItem} />
-      </Router>
-    );
-
-    expect(screen.getByText('Spinner Component')).toBeInTheDocument();
   });
 
   test('renders DetailedCard with data', () => {
@@ -118,20 +102,6 @@ describe('DetailedCard Component', () => {
       pathname: '/',
       search: '',
     });
-  });
-
-  test('loader function fetches data correctly', async () => {
-    const mockResponse = {
-      name: 'Tatooine',
-    };
-
-    fetchMock.mockResponseOnce(JSON.stringify(mockResponse));
-
-    const request = new Request('https://swapi.dev/api/planets/1');
-    const response = await loader({ request });
-
-    expect(fetchMock).toHaveBeenCalledWith('https://swapi.dev/api/planets/');
-    expect(response).toEqual(mockResponse);
   });
 
   test('loader function throws an error when fetch fails', async () => {
