@@ -129,7 +129,7 @@ describe('CardList Component', () => {
     const pushMock = jest.fn();
     mockUseRouter.mockReturnValue({
       push: pushMock,
-      query: {}, // No detail query
+      query: {},
     });
 
     render(

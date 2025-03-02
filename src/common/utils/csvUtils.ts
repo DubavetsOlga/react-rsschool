@@ -26,9 +26,7 @@ export const generateCSVContent = (
     'Population',
   ];
 
-  return [header, ...rows]
-    .map((row) => row.join(';')) // Convert each row to a semicolon-separated string
-    .join('\n');
+  return [header, ...rows].map((row) => row.join(';')).join('\n');
 };
 
 /**

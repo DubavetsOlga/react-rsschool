@@ -12,7 +12,7 @@ export const Pagination = ({
   totalItems,
 }: Props): ReactElement => {
   const router = useRouter();
-  const currentPage = router.query.page ?? '1'; // Get current page from the router query
+  const currentPage = router.query.page ?? '1';
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
