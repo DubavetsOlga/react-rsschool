@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter, useNavigate, useSearchParams } from 'react-router';
-import { Card } from '../components';
+import { Card } from '../common/components';
 import '@testing-library/jest-dom';
 import { PlanetItem } from '../store/planetsApi.types.ts';
 import { configureStore } from '@reduxjs/toolkit';
@@ -12,16 +12,16 @@ import {
 } from '../store/planetSlice.ts';
 import { Provider } from 'react-redux';
 import { planetsApi } from '../store/planets/planetsApi';
-import { useAppSelector } from '../hooks/useAppSelector';
-import { useAppDispatch } from '../hooks/useAppDispatch';
+import { useAppSelector } from '../common/hooks/useAppSelector';
+import { useAppDispatch } from '../common/hooks/useAppDispatch';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useSearchParams: jest.fn(),
   useNavigate: jest.fn(),
 }));
-jest.mock('../hooks/useAppSelector');
-jest.mock('../hooks/useAppDispatch');
+jest.mock('../common/hooks/useAppSelector');
+jest.mock('../common/hooks/useAppDispatch');
 
 const mockNavigate = useNavigate as jest.Mock;
 const mockUseSearchParams = useSearchParams as jest.Mock;

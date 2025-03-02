@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Page404 } from '../components';
+import { Page404 } from '../common/components';
 import '@testing-library/jest-dom';
 
 describe('Page404 component', () => {

@@ -1,27 +1,32 @@
-import { ReactElement, useCallback, useContext } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { ReactElement, useContext } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
 import { Pagination } from '../pagination/Pagination';
 import { Card } from '../card/Card';
 import { THEMES } from '../context/constants';
 import { ThemeContext } from '../context/ThemeContext';
 import s from './style.module.css';
-import { ResponseType } from '../../store/planetsApi.types.ts';
+import { ResponseType } from '../../../store/planetsApi.types';
 
 const ITEMS_PER_PAGE = 10;
 
 export const CardList = ({ results, count }: ResponseType): ReactElement => {
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
+  const navigate = useNavigate();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
-  const handleClickPanel = useCallback(() => {
+  const handleClickPanel = () => {
     if (!searchParams.get('detail')) return;
 
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.delete('detail');
-    setSearchParams(newSearchParams);
-  }, [searchParams, setSearchParams]);
+
+    navigate({
+      pathname: '/',
+      search: newSearchParams.toString(),
+    });
+  };
 
   if (results?.length === 0) return <p>No results found.</p>;
 

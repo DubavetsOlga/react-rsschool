@@ -1,10 +1,8 @@
 import { Outlet } from 'react-router';
-import { Search } from '../search/Search';
-import { CardList } from '../cardList/CardList';
-import { SelectedItems } from '../selectedItems/SelectedItems';
+import { Search, CardList, SelectedItems } from '../../common/components';
 import s from './style.module.css';
 import { Route } from '../../../.react-router/types/src/+types/root';
-import Spinner from '../spinner/Spinner';
+import Spinner from '../../common/components/spinner/Spinner';
 
 export async function loader({ request }: { request: Request }) {
   const url = new URL(request.url);
@@ -22,7 +20,7 @@ export async function loader({ request }: { request: Request }) {
   return await res.json();
 }
 
-export const Layout = ({ loaderData }: Route.ComponentProps) => {
+export const Main = ({ loaderData }: Route.ComponentProps) => {
   if (!loaderData) {
     return <Spinner />;
   }
@@ -41,4 +39,4 @@ export const Layout = ({ loaderData }: Route.ComponentProps) => {
   );
 };
 
-export default Layout;
+export default Main;

@@ -5,15 +5,20 @@ import { ThemeContext } from './ThemeContext';
 
 type ThemeProps = {
   children: ReactNode;
+  initialTheme?: string;
 };
 
-export const Theme = ({ children }: ThemeProps) => {
-  const [theme, setTheme] = useState<string>(() => {
-    if (typeof window === 'undefined') {
-      return THEMES.LIGHT;
+export const Theme = ({ children, initialTheme }: ThemeProps) => {
+  const [theme, setTheme] = useState<string>(initialTheme || THEMES.LIGHT);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedTheme = JSON.parse(localStorage.getItem('theme') || 'null');
+      if (storedTheme) {
+        setTheme(storedTheme);
+      }
     }
-    return JSON.parse(localStorage.getItem('theme') || 'null') || THEMES.LIGHT;
-  });
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

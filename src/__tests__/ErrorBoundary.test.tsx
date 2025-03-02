@@ -1,15 +1,15 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ErrorBoundary } from '../components';
+import { ErrorBoundary } from '../common/components';
 import { BrowserRouter, useNavigate } from 'react-router';
-import { Path } from '../app/Routing';
+import { Path } from '../routes/constants.ts';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),
 }));
 
-jest.mock('../components/button/Button', () => ({
+jest.mock('../common/components/button/Button', () => ({
   Button: jest.fn(({ onClick, children, style }) => (
     <button onClick={onClick} style={style}>
       {children}

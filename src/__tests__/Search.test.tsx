@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Search } from '../components';
+import { Search } from '../common/components';
 import {
   BrowserRouter,
   MemoryRouter,

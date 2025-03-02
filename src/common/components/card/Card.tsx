@@ -5,13 +5,13 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import {
   removePlanetFromSelected,
   addPlanetToSelected,
-} from '../../store/planetSlice.ts';
-import { PlanetItem } from '../../store/planetsApi.types.ts';
+} from '../../../store/planetSlice';
+import { PlanetItem } from '../../../store/planetsApi.types';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import s from './style.module.css';
 
 export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -33,7 +33,10 @@ export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
 
     if (id === searchParams.get('detail')) {
       newSearchParams.delete('detail');
-      setSearchParams(newSearchParams);
+      navigate({
+        pathname: '/',
+        search: newSearchParams.toString(),
+      });
       return;
     }
 

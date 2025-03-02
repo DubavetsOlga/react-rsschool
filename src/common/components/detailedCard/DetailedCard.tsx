@@ -1,12 +1,11 @@
 import { useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
-import { Button } from '../button/Button';
+import { Button } from '../index';
 import s from './style.module.css';
-import { Path } from '../../app/Routing';
 import { THEMES } from '../context/constants';
-import { ThemeContext } from '../context/ThemeContext';
-import { Route } from '../../../.react-router/types/src/+types/root';
-import { PlanetItem } from '../../store/planetsApi.types';
+import { ThemeContext } from '../context/ThemeContext.tsx';
+import { Route } from '../../../../.react-router/types/src/+types/root';
+import { PlanetItem } from '../../../store/planetsApi.types';
 import Spinner from '../spinner/Spinner';
 
 export async function loader({ request }: { request: Request }) {
@@ -38,7 +37,7 @@ export const DetailedCard = ({ loaderData }: Route.ComponentProps) => {
     newSearchParams.delete('detail');
 
     navigate({
-      pathname: Path.Main,
+      pathname: '/',
       search: newSearchParams.toString(),
     });
   };

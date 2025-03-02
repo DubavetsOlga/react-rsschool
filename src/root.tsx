@@ -7,10 +7,10 @@ import {
   useNavigation,
 } from 'react-router';
 import { ReactNode } from 'react';
-import { ErrorBoundary, Header, Spinner } from './components';
+import { ErrorBoundary, Header, Spinner } from './common/components';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
-import { Theme } from './components/context/Theme';
+import { Theme } from './common/components/context/Theme';
 import './index.css';
 
 export function Layout({ children }: { children: ReactNode }) {

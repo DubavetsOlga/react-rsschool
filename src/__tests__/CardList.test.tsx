@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
-import { CardList } from '../components';
+import { CardList } from '../common/components';
 import { configureStore } from '@reduxjs/toolkit';
 import { useGetPlanetsQuery } from '../store/planets/planetsApi';
 import { planetReducer, planetSlice } from '../store/planetSlice.ts';
@@ -11,10 +11,10 @@ jest.mock('../store/planets/planetsApi', () => ({
   useGetPlanetsQuery: jest.fn(),
 }));
 
-jest.mock('../components/spinner/Spinner', () => ({
+jest.mock('../common/components/spinner/Spinner', () => ({
   Spinner: () => <div>Loading...</div>,
 }));
-jest.mock('../components/pagination/Pagination', () => ({
+jest.mock('../common/components/pagination/Pagination', () => ({
   Pagination: () => <div>Pagination</div>,
 }));
 

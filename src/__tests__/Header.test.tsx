@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import { Header } from '../components';
+import { Header } from '../common/components';
 import '@testing-library/jest-dom';
 
-jest.mock('../components/themeToggle/ThemeToggle', () => ({
+jest.mock('../common/components/themeToggle/ThemeToggle', () => ({
   ThemeToggle: () => <div>Mocked ThemeToggle</div>,
 }));
 

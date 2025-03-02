@@ -1,11 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { THEMES } from '../components/context/constants';
-import { ThemeToggle } from '../components';
-import { ThemeContext } from '../components/context/ThemeContext';
+import { THEMES } from '../common/components/context/constants';
+import { ThemeToggle } from '../common/components';
+import { ThemeContext } from '../common/components/context/ThemeContext';
 import { ReactNode } from 'react';
 import '@testing-library/jest-dom';
 
-jest.mock('../components/button/Button', () => ({
+jest.mock('../common/components/button/Button', () => ({
   Button: ({
     onClick,
     children,

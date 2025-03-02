@@ -1,4 +1,4 @@
-import s from './Spinner.module.css';
+import s from './spinner.module.css';
 import { ReactElement } from 'react';
 
 export const Spinner = (): ReactElement => {

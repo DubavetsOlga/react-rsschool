@@ -1,7 +1,7 @@
 import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useContext, useRef, useState } from 'react';
-import { removeAllPlanetsFromSelected } from '../../store/planetSlice.ts';
+import { removeAllPlanetsFromSelected } from '../../../store/planetSlice';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { THEMES } from '../context/constants';

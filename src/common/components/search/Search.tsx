@@ -1,30 +1,31 @@
-import { ReactElement, useEffect, useRef, useCallback } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import { Input } from '../input/Input';
 import { Button } from '../button/Button';
 import s from './style.module.css';
-import { useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useInitializeSearchParams } from '../../hooks/useInitializeSearchParams';
-import { removeAllPlanetsFromSelected } from '../../store/planetSlice';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
 
 export const Search = (): ReactElement => {
   const initializeSearchParams = useInitializeSearchParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
-  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     initializeSearchParams();
   }, []);
 
-  const handleClickSearch = useCallback((): void => {
+  const handleClickSearch = (): void => {
     const inputValue = inputRef.current?.value || '';
     localStorage.setItem('searchValue', inputValue);
 
-    setSearchParams(inputValue ? { search: inputValue } : {});
-
-    dispatch(removeAllPlanetsFromSelected());
-  }, [setSearchParams, dispatch]);
+    navigate({
+      pathname: '/',
+      search: inputValue
+        ? `?${new URLSearchParams({ search: inputValue }).toString()}`
+        : '',
+    });
+  };
 
   return (
     <div className={s.search}>
