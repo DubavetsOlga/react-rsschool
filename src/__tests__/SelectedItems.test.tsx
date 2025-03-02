@@ -4,7 +4,7 @@ import { useAppDispatch } from '../common/hooks/useAppDispatch';
 import { useAppSelector } from '../common/hooks/useAppSelector';
 import { SelectedItems } from '../common/components';
 import { Theme } from '../common/components/context/Theme';
-import { removeAllPlanetsFromSelected } from '../store/planetSlice.ts';
+import { removeAllPlanetsFromSelected } from '../store/planetSlice';
 
 jest.mock('../common/hooks/useAppSelector');
 jest.mock('../common/hooks/useAppDispatch');

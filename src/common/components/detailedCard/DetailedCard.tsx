@@ -3,8 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router';
 import { Button } from '../index';
 import s from './style.module.css';
 import { THEMES } from '../context/constants';
-import { ThemeContext } from '../context/ThemeContext.tsx';
-import { Route } from '../../../../.react-router/types/src/+types/root';
+import { ThemeContext } from '../context/ThemeContext';
 import { PlanetItem } from '../../../store/planetsApi.types';
 import Spinner from '../spinner/Spinner';
 
@@ -21,14 +20,14 @@ export async function loader({ request }: { request: Request }) {
   return await res.json();
 }
 
-export const DetailedCard = ({ loaderData }: Route.ComponentProps) => {
+export const DetailedCard = ({ loaderData }: { loaderData: PlanetItem }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const detailId = searchParams.get('detail');
   const context = useContext(ThemeContext);
   const theme = context ? context.theme : THEMES.LIGHT;
 
-  if (!loaderData) return <Spinner />;
+  if (!loaderData || Object.keys(loaderData).length === 0) return <Spinner />;
 
   const data: PlanetItem = loaderData;
 

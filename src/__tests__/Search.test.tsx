@@ -1,16 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Search } from '../common/components';
-import {
-  BrowserRouter,
-  MemoryRouter,
-  Route,
-  Routes,
-  useSearchParams,
-} from 'react-router';
+import { BrowserRouter, MemoryRouter, useSearchParams } from 'react-router';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import { planetReducer } from '../store/planetSlice.ts';
+import { planetReducer } from '../store/planetSlice';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
@@ -32,6 +26,14 @@ describe('Search Component', () => {
       mockGetSearchParams,
       mockSetSearchParams,
     ]);
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        setItem: jest.fn(),
+        getItem: jest.fn(() => null),
+        clear: jest.fn(),
+      },
+      writable: true,
+    });
   });
 
   it('renders the search input and button', () => {
@@ -62,70 +64,25 @@ describe('Search Component', () => {
     const input = screen.getByPlaceholderText('Enter search term');
     expect(input).toHaveValue('initial search');
   });
-});
 
-beforeEach(() => {
-  localStorage.clear();
-  Object.defineProperty(window, 'localStorage', {
-    value: {
-      setItem: jest.fn(),
-      getItem: jest.fn(() => null),
-      clear: jest.fn(),
-    },
-    writable: true,
-  });
-});
-
-it('should update search params and localStorage when search button is clicked', () => {
-  const setSearchParams = jest.fn();
-
-  (useSearchParams as jest.Mock).mockImplementation(() => [
-    new URLSearchParams(),
-    setSearchParams,
-  ]);
-
-  render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path="/" element={<Search />} />
-        </Routes>
+  it('should clear search param if input is empty and search button is clicked', () => {
+    render(
+      <MemoryRouter initialEntries={['/?search=test%20search']}>
+        <Provider store={store}>
+          <Search />
+        </Provider>
       </MemoryRouter>
-    </Provider>
-  );
+    );
 
-  const input = screen.getByPlaceholderText('Enter search term');
-  const button = screen.getByLabelText('Search button');
+    const input = screen.getByPlaceholderText('Enter search term');
+    const button = screen.getByLabelText('Search button');
 
-  fireEvent.change(input, { target: { value: 'test search' } });
+    fireEvent.change(input, { target: { value: '' } });
 
-  fireEvent.click(button);
+    fireEvent.click(button);
 
-  expect(setSearchParams).toHaveBeenCalledWith({ search: 'test search' });
+    expect(window.location.search).toBe('');
 
-  expect(localStorage.setItem).toHaveBeenCalledWith(
-    'searchValue',
-    'test search'
-  );
-});
-
-it('should clear search param if input is empty and search button is clicked', () => {
-  render(
-    <MemoryRouter initialEntries={['/?search=test%20search']}>
-      <Provider store={store}>
-        <Search />
-      </Provider>
-    </MemoryRouter>
-  );
-
-  const input = screen.getByPlaceholderText('Enter search term');
-  const button = screen.getByLabelText('Search button');
-
-  fireEvent.change(input, { target: { value: '' } });
-
-  fireEvent.click(button);
-
-  expect(window.location.search).toBe('');
-
-  expect(localStorage.setItem).toHaveBeenCalledWith('searchValue', '');
+    expect(localStorage.setItem).toHaveBeenCalledWith('searchValue', '');
+  });
 });

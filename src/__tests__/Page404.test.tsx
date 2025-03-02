@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { Page404 } from '../common/components';
 import '@testing-library/jest-dom';
+import Page404 from '../routes/page404/Page404';
 
 describe('Page404 component', () => {
   it('renders 404 and page not found text correctly', () => {

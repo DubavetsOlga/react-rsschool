@@ -2,7 +2,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ErrorBoundary } from '../common/components';
 import { BrowserRouter, useNavigate } from 'react-router';
-import { Path } from '../routes/constants.ts';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
@@ -128,7 +127,7 @@ describe('ErrorBoundary', () => {
     const retryButton = screen.getByText('Retry');
     fireEvent.click(retryButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith(Path.Main);
+    expect(mockNavigate).toHaveBeenCalledWith('/');
 
     render(
       <BrowserRouter>

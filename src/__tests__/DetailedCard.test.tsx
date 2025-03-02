@@ -1,146 +1,145 @@
-import { DetailedCard } from '../common/components';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { useGetPlanetByIdQuery } from '../store/planets/planetsApi';
-import { planetReducer, planetSlice } from '../store/planetSlice.ts';
-import { useNavigate, useSearchParams } from 'react-router';
+import { render, screen, fireEvent } from '@testing-library/react';
+import {
+  BrowserRouter as Router,
+  useSearchParams,
+  useNavigate,
+} from 'react-router';
+import fetchMock from 'jest-fetch-mock';
+import DetailedCard, {
+  loader,
+} from '../common/components/detailedCard/DetailedCard';
+import { PlanetItem } from '../store/planetsApi.types';
 import '@testing-library/jest-dom';
+
+fetchMock.enableMocks();
+
+jest.mock('../common/components/spinner/Spinner', () => {
+  const MockSpinner = () => <div>Spinner Component</div>;
+  MockSpinner.displayName = 'Spinner';
+  return MockSpinner;
+});
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
   useSearchParams: jest.fn(),
+  useNavigate: jest.fn(),
 }));
-jest.mock('../store/planets/planetsApi', () => ({
-  useGetPlanetByIdQuery: jest.fn(),
-}));
-
-const store = configureStore({
-  reducer: {
-    [planetSlice.name]: planetReducer,
-  },
-});
 
 describe('DetailedCard Component', () => {
-  const mockUseGetPlanetByIdQuery = useGetPlanetByIdQuery as jest.Mock;
-  const mockNavigate = useNavigate as jest.Mock;
-  const mockUseSearchParams = useSearchParams as jest.Mock;
+  const mockNavigate = jest.fn();
+  const mockSetSearchParams = jest.fn();
 
   beforeEach(() => {
+    fetchMock.resetMocks();
     jest.clearAllMocks();
-    mockNavigate.mockImplementation(() => jest.fn());
-    mockUseSearchParams.mockReturnValue([new URLSearchParams(''), jest.fn()]);
+
+    (useSearchParams as jest.Mock).mockReturnValue([
+      new URLSearchParams('detail=1'),
+      mockSetSearchParams,
+    ]);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it('renders a loading spinner when data is loading', () => {
-    mockUseGetPlanetByIdQuery.mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      error: undefined,
-    });
-
-    const { container } = render(
-      <Provider store={store}>
-        <DetailedCard />
-      </Provider>
+  test('renders Spinner when loaderData is not available', () => {
+    render(
+      <Router>
+        <DetailedCard loaderData={{} as PlanetItem} />
+      </Router>
     );
 
-    const loaderElement = container.querySelector('.loader');
-    expect(loaderElement).toBeInTheDocument();
-    expect(loaderElement).toHaveClass('loader');
+    expect(screen.getByText('Spinner Component')).toBeInTheDocument();
   });
 
-  it('renders planet details when data is loaded', async () => {
-    const mockData = {
-      name: 'Earth',
-      rotation_period: '24 hours',
-      orbital_period: '365 days',
-      diameter: '12742 km',
-      climate: 'Temperate',
-      gravity: '9.8 m/s²',
-      terrain: 'Mountain, Desert',
-      surface_water: '70%',
-      population: '7 billion',
+  test('renders DetailedCard with data', () => {
+    const mockData: PlanetItem = {
+      name: 'Tatooine',
+      rotation_period: '23',
+      orbital_period: '304',
+      diameter: '10465',
+      climate: 'arid',
+      gravity: '1 standard',
+      terrain: 'desert',
+      surface_water: '1',
+      population: '200000',
+      residents: [],
+      films: [],
+      created: '',
+      edited: '',
+      url: '',
     };
 
-    mockUseGetPlanetByIdQuery.mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      error: undefined,
-    });
-
     render(
-      <Provider store={store}>
-        <DetailedCard />
-      </Provider>
+      <Router>
+        <DetailedCard loaderData={mockData} />
+      </Router>
     );
 
-    expect(await screen.findByText('Name: Earth')).toBeInTheDocument();
-    expect(screen.getByText('Rotation Period: 24 hours')).toBeInTheDocument();
-    expect(screen.getByText('Orbital Period: 365 days')).toBeInTheDocument();
-    expect(screen.getByText('Diameter: 12742 km')).toBeInTheDocument();
-    expect(screen.getByText('Climate: Temperate')).toBeInTheDocument();
-    expect(screen.getByText('Gravity: 9.8 m/s²')).toBeInTheDocument();
-    expect(screen.getByText('Terrain: Mountain, Desert')).toBeInTheDocument();
-    expect(screen.getByText('Surface Water: 70%')).toBeInTheDocument();
-    expect(screen.getByText('Population: 7 billion')).toBeInTheDocument();
+    expect(screen.getByText('Planet Details')).toBeInTheDocument();
+    expect(screen.getByText('Name: Tatooine')).toBeInTheDocument();
+    expect(screen.getByText('Rotation Period: 23')).toBeInTheDocument();
+    expect(screen.getByText('Orbital Period: 304')).toBeInTheDocument();
+    expect(screen.getByText('Diameter: 10465')).toBeInTheDocument();
+    expect(screen.getByText('Climate: arid')).toBeInTheDocument();
+    expect(screen.getByText('Gravity: 1 standard')).toBeInTheDocument();
+    expect(screen.getByText('Terrain: desert')).toBeInTheDocument();
+    expect(screen.getByText('Surface Water: 1')).toBeInTheDocument();
+    expect(screen.getByText('Population: 200000')).toBeInTheDocument();
   });
 
-  it('displays error message if there is an error', () => {
-    mockUseGetPlanetByIdQuery.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      error: { details: 'Not found' },
-    });
-
-    render(
-      <Provider store={store}>
-        <DetailedCard />
-      </Provider>
-    );
-
-    expect(screen.getByText('Not found')).toBeInTheDocument();
-  });
-
-  it('calls navigate to close details when the close button is clicked', async () => {
-    const mockData = {
-      name: 'Earth',
-      rotation_period: '24 hours',
-      orbital_period: '365 days',
-      diameter: '12742 km',
-      climate: 'Temperate',
-      gravity: '9.8 m/s²',
-      terrain: 'Mountain, Desert',
-      surface_water: '70%',
-      population: '7 billion',
+  test('calls navigate when Close Details button is clicked', () => {
+    const mockData: PlanetItem = {
+      name: 'Tatooine',
+      rotation_period: '23',
+      orbital_period: '304',
+      diameter: '10465',
+      climate: 'arid',
+      gravity: '1 standard',
+      terrain: 'desert',
+      surface_water: '1',
+      population: '200000',
+      residents: [],
+      films: [],
+      created: '',
+      edited: '',
+      url: '',
     };
 
-    mockUseGetPlanetByIdQuery.mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      error: undefined,
-    });
-
-    const navigateMock = jest.fn();
-    mockNavigate.mockImplementation(() => navigateMock);
-
     render(
-      <Provider store={store}>
-        <DetailedCard />
-      </Provider>
+      <Router>
+        <DetailedCard loaderData={mockData} />
+      </Router>
     );
 
     const closeButton = screen.getByText('Close Details');
     fireEvent.click(closeButton);
 
-    expect(navigateMock).toHaveBeenCalledWith({
+    expect(mockNavigate).toHaveBeenCalledWith({
       pathname: '/',
       search: '',
     });
+  });
+
+  test('loader function fetches data correctly', async () => {
+    const mockResponse = {
+      name: 'Tatooine',
+    };
+
+    fetchMock.mockResponseOnce(JSON.stringify(mockResponse));
+
+    const request = new Request('https://swapi.dev/api/planets/1');
+    const response = await loader({ request });
+
+    expect(fetchMock).toHaveBeenCalledWith('https://swapi.dev/api/planets/');
+    expect(response).toEqual(mockResponse);
+  });
+
+  test('loader function throws an error when fetch fails', async () => {
+    fetchMock.mockRejectOnce(new Error('Failed to fetch planets'));
+
+    const request = new Request('https://swapi.dev/api/planets/1');
+    await expect(loader({ request })).rejects.toThrow(
+      'Failed to fetch planets'
+    );
   });
 });
