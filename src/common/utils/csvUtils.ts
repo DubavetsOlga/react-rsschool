@@ -1,10 +1,5 @@
 import { PlanetItem } from '../types';
 
-/**
- * Generate CSV content from selected planets.
- * @param selectedPlanets The object containing selected planets.
- * @returns CSV string content.
- */
 export const generateCSVContent = (
   selectedPlanets: Record<string, PlanetItem>
 ) => {
@@ -29,11 +24,6 @@ export const generateCSVContent = (
   return [header, ...rows].map((row) => row.join(';')).join('\n');
 };
 
-/**
- * Trigger the CSV download by creating a Blob URL.
- * @param csvContent The CSV string content.
- * @returns The Blob URL.
- */
 export const triggerDownload = (csvContent: string) => {
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
 

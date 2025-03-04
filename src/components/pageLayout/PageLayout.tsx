@@ -1,7 +1,7 @@
 'use client';
 
-import { Theme } from '../../common/context/Theme.tsx';
-import { ErrorBoundary } from '../index.ts';
+import { Theme } from '../../common/context/Theme';
+import { ErrorBoundary } from '../index';
 import { Provider } from 'react-redux';
 import { useStoreInitialization } from '../../common/hooks';
 import { ReactNode } from 'react';

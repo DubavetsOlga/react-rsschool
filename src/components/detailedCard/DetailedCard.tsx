@@ -1,10 +1,7 @@
 'use client';
 
-import { useContext } from 'react';
 import { Button } from '../button/Button';
 import s from './style.module.css';
-import { THEMES } from '../../common/context/constants';
-import { ThemeContext } from '../../common/context/ThemeContext';
 import { PlanetItem } from '../../common/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -13,7 +10,6 @@ type DetailedCardProps = {
 };
 
 export const DetailedCard = ({ planet }: DetailedCardProps) => {
-  const { theme = THEMES.LIGHT } = useContext(ThemeContext) || {};
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -31,7 +27,7 @@ export const DetailedCard = ({ planet }: DetailedCardProps) => {
 
   return (
     <div
-      className={`${s.details} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
+      className={s.details}
       role="dialog"
       aria-labelledby="detailed-card-title"
     >

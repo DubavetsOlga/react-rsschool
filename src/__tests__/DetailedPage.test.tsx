@@ -11,7 +11,12 @@ import {
   useAppSelector,
   useInitializeSearchParams,
 } from '../common/hooks';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+  redirect,
+} from 'next/navigation';
 import { use } from 'react';
 
 jest.mock('../common/utils', () => ({
@@ -102,5 +107,35 @@ describe('DetailedPage', () => {
 
     expect(screen.getByText('Name: Tatooine')).toBeInTheDocument();
     expect(screen.getByText('Climate: arid')).toBeInTheDocument();
+  });
+
+  it('should redirect if "detail" parameter is not provided', async () => {
+    const searchParams = { page: '1', search: '', detail: undefined };
+
+    const Page = await DetailedPage({ searchParams });
+
+    render(
+      <Theme>
+        <Provider store={store}>{Page}</Provider>
+      </Theme>
+    );
+
+    expect(redirect).toHaveBeenCalledWith('/?page=1&search=');
+  });
+
+  it('should redirect if fetchData returns null', async () => {
+    (fetchData as jest.Mock).mockResolvedValue(null);
+
+    const searchParams = { page: '1', search: '', detail: '1' };
+
+    const Page = await DetailedPage({ searchParams });
+
+    render(
+      <Theme>
+        <Provider store={store}>{Page}</Provider>
+      </Theme>
+    );
+
+    expect(redirect).toHaveBeenCalledWith('/?page=1&search=');
   });
 });

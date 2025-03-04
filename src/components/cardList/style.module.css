@@ -42,19 +42,3 @@
 .name {
   width: 120px;
 }
-
-.darkTheme.table {
-  background-color: #b4c2cc;
-}
-
-.darkTheme.table td {
-  color: #1f3554;
-}
-
-.darkTheme.table tbody tr:nth-child(even) {
-  background-color: #9db2bf;
-}
-
-.darkTheme.table tbody tr:hover {
-  background-color: #8196a6;
-}
