@@ -1,0 +1,41 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "target": "ES6",
+    "strict": true,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "types": ["node", "jest"],
+    "paths": {
+      "@components/": ["components/"],
+      "@pages/": ["pages/"]
+    },
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": ["src/css.d.ts", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

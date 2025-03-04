@@ -1,0 +1,8 @@
+.layout {
+  padding: 32px;
+}
+
+.container {
+  display: flex;
+  gap: 10px;
+}
