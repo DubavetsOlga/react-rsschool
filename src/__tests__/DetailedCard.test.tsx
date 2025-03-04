@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 import { DetailedCard } from '../components';
 import { planetReducer, planetSlice } from '../common/store/planetSlice';
 import { useRouter } from 'next/router';
+import { PlanetItem } from '../common/types';
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn(),
@@ -89,7 +90,7 @@ describe('DetailedCard Component', () => {
 
     render(
       <Provider store={store}>
-        <DetailedCard planet={null} error={errorMessage} />
+        <DetailedCard planet={{} as PlanetItem} error={errorMessage} />
       </Provider>
     );
 
@@ -101,7 +102,7 @@ describe('DetailedCard Component', () => {
   test('renders without planet', () => {
     render(
       <Provider store={store}>
-        <DetailedCard planet={null} error={null} />
+        <DetailedCard planet={{} as PlanetItem} error={null} />
       </Provider>
     );
 

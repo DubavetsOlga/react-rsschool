@@ -18,7 +18,7 @@ export const Search = ({
 
   useEffect(() => {
     initializeSearchParams();
-  }, [initializeSearchParams]);
+  }, []);
 
   const handleClickSearch = useCallback((): void => {
     const inputValue = inputRef.current?.value || '';
@@ -31,13 +31,14 @@ export const Search = ({
       delete newQuery.search;
     }
     delete newQuery.page;
+    delete newQuery.detail;
+
+    dispatch(removeAllPlanetsFromSelected());
 
     router.replace({
       pathname: '/',
       query: newQuery,
     });
-
-    dispatch(removeAllPlanetsFromSelected());
   }, [router, dispatch]);
 
   return (

@@ -22,7 +22,7 @@ export default function DetailedPage({
 }: DetailedPageProps) {
   return (
     <Layout planetsData={planetsData as ResponseType}>
-      <DetailedCard planet={planet} error={error} />
+      <DetailedCard planet={planet ?? ({} as PlanetItem)} error={error} />
     </Layout>
   );
 }

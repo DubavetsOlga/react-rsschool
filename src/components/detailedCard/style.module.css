@@ -21,3 +21,7 @@
 .darkTheme.details {
   background-color: #b4c2cc;
 }
+
+.errorMessage {
+  color: red;
+}
