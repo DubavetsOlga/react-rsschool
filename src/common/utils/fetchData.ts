@@ -2,7 +2,8 @@ export const fetchData = async <T>(url: string): Promise<T | null> => {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Failed to fetch data');
+      console.error('Failed to fetch data');
+      return null;
     }
     return await response.json();
   } catch (error) {

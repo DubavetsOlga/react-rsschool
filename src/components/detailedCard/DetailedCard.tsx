@@ -1,8 +1,5 @@
-import { useContext } from 'react';
 import { Button } from '../button/Button';
 import s from './style.module.css';
-import { THEMES } from '../../common/context/constants';
-import { ThemeContext } from '../../common/context/ThemeContext';
 import { PlanetItem } from '../../common/types';
 import { useRouter } from 'next/router';
 
@@ -12,7 +9,6 @@ type DetailedCardProps = {
 };
 
 export const DetailedCard = ({ planet, error }: DetailedCardProps) => {
-  const { theme = THEMES.LIGHT } = useContext(ThemeContext) || {};
   const router = useRouter();
 
   const handleClickCloseDetails = () => {
@@ -28,7 +24,7 @@ export const DetailedCard = ({ planet, error }: DetailedCardProps) => {
 
   return (
     <div
-      className={`${s.details} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
+      className={s.details}
       role="dialog"
       aria-labelledby="detailed-card-title"
     >
