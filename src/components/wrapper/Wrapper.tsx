@@ -1,10 +1,9 @@
 import { Search } from '../search/Search';
 import { SelectedItems } from '../selectedItems/SelectedItems';
 import s from './style.module.css';
-import { memo, ReactNode, Suspense } from 'react';
+import { memo, ReactNode } from 'react';
 import { Header } from '../header/Header';
 import { CardListWrapper } from '../cardList/CardListWrapper';
-import { Spinner } from '../spinner/Spinner';
 
 type LayoutProps = {
   children?: ReactNode;
@@ -22,12 +21,10 @@ const WrapperComponent = ({
       <Header />
       <div className={s.layout}>
         <Search />
-        <Suspense fallback={<Spinner />}>
-          <div className={s.container}>
-            <CardListWrapper page={page} search={search} />
-            {children}
-          </div>
-        </Suspense>
+        <div className={s.container}>
+          <CardListWrapper page={page} search={search} />
+          {children}
+        </div>
         <SelectedItems />
       </div>
     </div>
