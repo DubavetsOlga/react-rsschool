@@ -1,8 +1,5 @@
-import { useContext } from 'react';
 import { useSearchParams, useNavigate, redirect } from 'react-router';
 import { Button } from '../index';
-import { THEMES } from '../context/constants';
-import { ThemeContext } from '../context/ThemeContext';
 import { PlanetItem } from '../../../store/planetsApi.types';
 import s from './style.module.css';
 
@@ -11,7 +8,7 @@ export async function loader({ request }: { request: Request }) {
   const planetId = url.searchParams.get('detail') ?? '';
   const res = await fetch(`https://swapi.dev/api/planets/${planetId}`);
 
-  if (!res.ok || planetId === '') {
+  if (!res || !res.ok || planetId === '') {
     const newUrl = new URL('/', url.origin);
     url.searchParams.forEach((value, key) => {
       if (key !== 'detail') {
@@ -28,8 +25,6 @@ export async function loader({ request }: { request: Request }) {
 const DetailedCard = ({ loaderData }: { loaderData: PlanetItem }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const context = useContext(ThemeContext);
-  const theme = context ? context.theme : THEMES.LIGHT;
 
   const handleClickCloseDetails = () => {
     const newSearchParams = new URLSearchParams(searchParams);
@@ -42,7 +37,7 @@ const DetailedCard = ({ loaderData }: { loaderData: PlanetItem }) => {
 
   return (
     <div
-      className={`${s.details} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
+      className={s.details}
       role="dialog"
       aria-labelledby="detailed-card-title"
     >

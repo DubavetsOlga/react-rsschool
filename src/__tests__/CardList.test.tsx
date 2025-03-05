@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { BrowserRouter, useNavigate, useSearchParams } from 'react-router';
 import { Provider } from 'react-redux';
 import { CardList } from '../common/components';
 import { configureStore } from '@reduxjs/toolkit';
@@ -28,6 +28,7 @@ const store = configureStore({
 describe('CardList Component', () => {
   const mockUseSearchParams = jest.requireMock('react-router').useSearchParams;
   const mockUseNavigate = jest.requireMock('react-router').useNavigate;
+  const mockNavigate = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -38,6 +39,8 @@ describe('CardList Component', () => {
     ]);
 
     mockUseNavigate.mockReturnValue(jest.fn());
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
 
   test('renders loading state', () => {
@@ -124,5 +127,84 @@ describe('CardList Component', () => {
     expect(screen.getByText('Tatooine')).toBeInTheDocument();
     expect(screen.getByText('Alderaan')).toBeInTheDocument();
     expect(screen.getByText('Pagination')).toBeInTheDocument();
+  });
+
+  it('should not navigate when no "detail" param is in search params', () => {
+    (useSearchParams as jest.Mock).mockReturnValue([new URLSearchParams()]);
+
+    render(
+      <Provider store={store}>
+        <CardList
+          results={[
+            {
+              url: '1',
+              name: 'Tatooine',
+              terrain: 'Desert',
+              rotation_period: '',
+              orbital_period: '',
+              diameter: '',
+              climate: '',
+              gravity: '',
+              surface_water: '',
+              population: '',
+              residents: [],
+              films: [],
+              created: '',
+              edited: '',
+            },
+          ]}
+          count={1}
+        />
+      </Provider>
+    );
+
+    const tableHeader = document.querySelector('thead');
+    if (tableHeader) {
+      fireEvent.click(tableHeader);
+    }
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('should navigate when "detail" param is in search params', () => {
+    const searchParams = new URLSearchParams();
+    searchParams.set('detail', '1');
+    (useSearchParams as jest.Mock).mockReturnValue([searchParams]);
+
+    render(
+      <Provider store={store}>
+        <CardList
+          results={[
+            {
+              url: '1',
+              name: 'Tatooine',
+              terrain: 'Desert',
+              rotation_period: '',
+              orbital_period: '',
+              diameter: '',
+              climate: '',
+              gravity: '',
+              surface_water: '',
+              population: '',
+              residents: [],
+              films: [],
+              created: '',
+              edited: '',
+            },
+          ]}
+          count={1}
+        />
+      </Provider>
+    );
+
+    const tableHeader = document.querySelector('thead');
+    if (tableHeader) {
+      fireEvent.click(tableHeader);
+    }
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: '/',
+      search: '',
+    });
   });
 });

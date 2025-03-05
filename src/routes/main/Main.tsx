@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router';
 import { Search, CardList, SelectedItems } from '../../common/components';
-import { Route } from '../../../.react-router/types/src/+types/root';
 import Spinner from '../../common/components/spinner/Spinner';
 import s from './style.module.css';
+import { ResponseType } from '../../store/planetsApi.types';
 
 export async function loader({ request }: { request: Request }) {
   const url = new URL(request.url);
@@ -20,7 +20,7 @@ export async function loader({ request }: { request: Request }) {
   return await res.json();
 }
 
-const Main = ({ loaderData }: Route.ComponentProps) => {
+const Main = ({ loaderData }: { loaderData: ResponseType }) => {
   if (!loaderData) {
     return <Spinner />;
   }

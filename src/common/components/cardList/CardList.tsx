@@ -1,17 +1,13 @@
-import { ReactElement, useContext } from 'react';
+import { ReactElement } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Pagination } from '../pagination/Pagination';
 import { Card } from '../card/Card';
-import { THEMES } from '../context/constants';
-import { ThemeContext } from '../context/ThemeContext';
 import { ResponseType } from '../../../store/planetsApi.types';
 import s from './style.module.css';
 
 const ITEMS_PER_PAGE = 10;
 
 export const CardList = ({ results, count }: ResponseType): ReactElement => {
-  const context = useContext(ThemeContext);
-  const theme = context ? context.theme : THEMES.LIGHT;
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -32,9 +28,7 @@ export const CardList = ({ results, count }: ResponseType): ReactElement => {
 
   return (
     <div role="button" tabIndex={0} aria-label="Close detail view">
-      <table
-        className={`${s.table} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
-      >
+      <table className={s.table}>
         <thead onClick={handleClickPanel}>
           <tr>
             <th className={s.checkbox}></th>
@@ -44,7 +38,7 @@ export const CardList = ({ results, count }: ResponseType): ReactElement => {
         </thead>
         <tbody>{results?.map((el) => <Card key={el.url} item={el} />)}</tbody>
       </table>
-      <Pagination itemsPerPage={ITEMS_PER_PAGE} totalItems={count || 0} />
+      <Pagination itemsPerPage={ITEMS_PER_PAGE} totalItems={count} />
     </div>
   );
 };

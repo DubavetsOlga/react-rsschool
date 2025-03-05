@@ -57,6 +57,7 @@ export const SelectedItems = () => {
         href={downloadUrl}
         download={`${selectedCount}_planets.csv`}
         className={s.invisible}
+        role="link"
       >
         Download link
       </a>

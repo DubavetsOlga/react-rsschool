@@ -3,6 +3,7 @@ import {
   BrowserRouter as Router,
   useSearchParams,
   useNavigate,
+  redirect,
 } from 'react-router';
 import fetchMock from 'jest-fetch-mock';
 import DetailedCard, {
@@ -17,7 +18,10 @@ jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useSearchParams: jest.fn(),
   useNavigate: jest.fn(),
+  redirect: jest.fn(),
 }));
+
+global.fetch = jest.fn() as jest.Mock;
 
 describe('DetailedCard Component', () => {
   const mockNavigate = jest.fn();
@@ -104,12 +108,52 @@ describe('DetailedCard Component', () => {
     });
   });
 
-  test('loader function throws an error when fetch fails', async () => {
-    fetchMock.mockRejectOnce(new Error('Failed to fetch planets'));
+  it('should redirect when planetId is empty', async () => {
+    const mockRequest = new Request('https://some-domain.com/detailed/?page=2');
 
-    const request = new Request('https://swapi.dev/api/planets/1');
-    await expect(loader({ request })).rejects.toThrow(
-      'Failed to fetch planets'
+    await loader({ request: mockRequest });
+
+    expect(redirect).toHaveBeenCalledWith('https://some-domain.com/?page=2');
+  });
+
+  it('should redirect when fetch fails (non-2xx response)', async () => {
+    const mockRequest = new Request(
+      'https://some-domain.com/detailed/?detail=1'
     );
+
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false,
+    });
+
+    await loader({ request: mockRequest });
+
+    expect(redirect).toHaveBeenCalledWith('https://some-domain.com/');
+  });
+
+  it('should return data when fetch is successful', async () => {
+    const mockRequest = new Request(
+      'https://some-domain.com/detailed/?detail=1'
+    );
+
+    const mockPlanetData = {
+      name: 'Tatooine',
+      rotation_period: '23',
+      orbital_period: '304',
+      diameter: '10465',
+      climate: 'arid',
+      gravity: '1',
+      terrain: 'desert',
+      surface_water: '1',
+      population: '200000',
+    };
+
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockPlanetData,
+    });
+
+    const result = await loader({ request: mockRequest });
+
+    expect(result).toEqual(mockPlanetData);
   });
 });

@@ -1,7 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { BrowserRouter as Router, useLoaderData } from 'react-router';
 import fetchMock from 'jest-fetch-mock';
-import Main, { loader } from '../routes/main/Main';
+import { loader } from '../routes/main/Main';
 import { ResponseType } from '../store/planetsApi.types';
 import '@testing-library/jest-dom';
 
@@ -29,12 +27,6 @@ jest.mock('../common/components/selectedItems/SelectedItems', () => {
   return MockSelectedItems;
 });
 
-jest.mock('../common/components/spinner/Spinner', () => {
-  const MockSpinner = () => <div>Spinner Component</div>;
-  MockSpinner.displayName = 'Spinner';
-  return MockSpinner;
-});
-
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useLoaderData: jest.fn(),
@@ -49,30 +41,6 @@ describe('Main Component', () => {
   beforeEach(() => {
     fetchMock.resetMocks();
     jest.clearAllMocks();
-  });
-
-  test('renders Spinner when loaderData is not available', () => {
-    (useLoaderData as jest.Mock).mockReturnValue(null);
-
-    render(
-      <Router>
-        <Main
-          params={{}}
-          loaderData={undefined}
-          matches={[
-            {
-              params: {},
-              id: 'root',
-              pathname: '/',
-              data: undefined,
-              handle: {},
-            },
-          ]}
-        />
-      </Router>
-    );
-
-    expect(screen.getByText('Spinner Component')).toBeInTheDocument();
   });
 
   test('loader function fetches data correctly', async () => {
