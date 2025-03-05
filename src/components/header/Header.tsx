@@ -1,5 +1,5 @@
 import { ThemeToggle } from '../themeToggle/ThemeToggle';
-import s from '../header/style.module.css';
+import s from './style.module.css';
 
 export const Header = () => {
   return (
