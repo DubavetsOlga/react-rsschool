@@ -1,64 +1,32 @@
-import {
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-import { useSearchParams } from 'react-router';
-import { Spinner } from '../spinner/Spinner';
+import { ReactElement } from 'react';
+import { useRouter } from 'next/router';
 import { Pagination } from '../pagination/Pagination';
 import { Card } from '../card/Card';
-import { useGetPlanetsQuery } from '../../api/planets/planetsApi';
-import { THEMES } from '../../app/context/constants';
-import { ThemeContext } from '../../app/context/ThemeContext';
 import s from './style.module.css';
+import { PlanetItem, ResponseType } from '../../common/types';
 
 const ITEMS_PER_PAGE = 10;
 
-export const CardList = (): ReactElement => {
-  const [errMsg, setErrMsg] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
-  const searchValue = searchParams.get('search') ?? '';
-  const currentPage = searchParams.get('page') ?? '1';
-  const context = useContext(ThemeContext);
-  const theme = context ? context.theme : THEMES.LIGHT;
+export const CardList = ({ results, count }: ResponseType): ReactElement => {
+  const router = useRouter();
 
-  const { data, isLoading, isFetching, error } = useGetPlanetsQuery({
-    page: currentPage,
-    searchValue,
-  });
+  const handleClickPanel = () => {
+    if (!router.query.detail) return;
 
-  useEffect(() => {
-    if (error) {
-      let errMsg = 'Some error occurred';
-      if ('data' in error) {
-        const errData = error.data as Error;
-        if ('message' in errData) {
-          errMsg = errData.message as string;
-        }
-      }
-      setErrMsg(errMsg);
-    }
-  }, [error]);
+    const newQuery = { ...router.query };
+    delete newQuery.detail;
 
-  const handleClickPanel = useCallback(() => {
-    if (!searchParams.get('detail')) return;
+    router.push({
+      pathname: '/',
+      query: newQuery,
+    });
+  };
 
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.delete('detail');
-    setSearchParams(newSearchParams);
-  }, [searchParams, setSearchParams]);
-
-  if (isLoading || isFetching) return <Spinner />;
-  if (error) return <div>Error: {errMsg}</div>;
-  if (data?.results?.length === 0) return <p>No results found.</p>;
+  if (!results?.length) return <p>No results found.</p>;
 
   return (
     <div role="button" tabIndex={0} aria-label="Close detail view">
-      <table
-        className={`${s.table} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
-      >
+      <table className={s.table}>
         <thead onClick={handleClickPanel}>
           <tr>
             <th className={s.checkbox}></th>
@@ -67,10 +35,12 @@ export const CardList = (): ReactElement => {
           </tr>
         </thead>
         <tbody>
-          {data?.results?.map((el) => <Card key={el.url} item={el} />)}
+          {results.map((el: PlanetItem) => (
+            <Card key={el.url} item={el} />
+          ))}
         </tbody>
       </table>
-      <Pagination itemsPerPage={ITEMS_PER_PAGE} totalItems={data?.count || 0} />
+      <Pagination itemsPerPage={ITEMS_PER_PAGE} totalItems={count || 0} />
     </div>
   );
 };

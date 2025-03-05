@@ -1,9 +1,12 @@
-export default {
-  preset: 'ts-jest',
+const nextJest = require('next/jest');
+
+module.exports = nextJest({
+  dir: './',
+})({
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
   transform: {
-    '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': 'babel-jest',
   },
   testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
   moduleNameMapper: {
@@ -20,4 +23,4 @@ export default {
     '!src/__tests__/setup.ts',
   ],
   coverageReporters: ['text', 'lcov'],
-};
+});

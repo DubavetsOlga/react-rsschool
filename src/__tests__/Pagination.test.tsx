@@ -1,25 +1,37 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { MemoryRouter, Route, Routes, useSearchParams } from 'react-router';
 import { Pagination } from '../components';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { planetReducer } from '../common/store/planetSlice';
+import { useRouter } from 'next/router';
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useSearchParams: jest.fn(),
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
 }));
 
-describe('Pagination', () => {
+const store = configureStore({
+  reducer: planetReducer,
+});
+
+describe('Pagination Component', () => {
   it('should render pagination buttons correctly based on totalItems and itemsPerPage', () => {
     const setSearchParams = jest.fn();
-    (useSearchParams as jest.Mock).mockReturnValue([
-      new URLSearchParams({ page: '1' }),
-      setSearchParams,
-    ]);
+    (useRouter as jest.Mock).mockReturnValue({
+      query: { page: '1' },
+      push: setSearchParams,
+      replace: setSearchParams,
+      pathname: '/',
+    });
 
     const totalItems = 50;
     const itemsPerPage = 10;
 
-    render(<Pagination itemsPerPage={itemsPerPage} totalItems={totalItems} />);
+    render(
+      <Provider store={store}>
+        <Pagination itemsPerPage={itemsPerPage} totalItems={totalItems} />
+      </Provider>
+    );
 
     const pageButtons = screen.getAllByRole('button', { name: /go to page/i });
     expect(pageButtons).toHaveLength(5);
@@ -27,12 +39,18 @@ describe('Pagination', () => {
 
   it('should not render pagination if there is only 1 page', () => {
     const setSearchParams = jest.fn();
-    (useSearchParams as jest.Mock).mockReturnValue([
-      new URLSearchParams({ page: '1' }),
-      setSearchParams,
-    ]);
+    (useRouter as jest.Mock).mockReturnValue({
+      query: { page: '1' },
+      push: setSearchParams,
+      replace: setSearchParams,
+      pathname: '/',
+    });
 
-    render(<Pagination itemsPerPage={10} totalItems={5} />);
+    render(
+      <Provider store={store}>
+        <Pagination itemsPerPage={10} totalItems={5} />
+      </Provider>
+    );
 
     const pageButtons = screen.queryAllByRole('button', {
       name: /go to page/i,
@@ -43,25 +61,29 @@ describe('Pagination', () => {
   it('should handle page click correctly', () => {
     const setSearchParams = jest.fn();
 
-    (useSearchParams as jest.Mock).mockImplementation(() => [
-      new URLSearchParams('page=1'),
-      setSearchParams,
-    ]);
+    (useRouter as jest.Mock).mockReturnValue({
+      query: { page: '1' },
+      push: setSearchParams,
+      replace: setSearchParams,
+      pathname: '/',
+    });
 
     render(
-      <MemoryRouter initialEntries={['/?page=1']}>
-        <Routes>
-          <Route
-            path="/"
-            element={<Pagination itemsPerPage={10} totalItems={50} />}
-          />
-        </Routes>
-      </MemoryRouter>
+      <Provider store={store}>
+        <Pagination itemsPerPage={10} totalItems={50} />
+      </Provider>
     );
 
     const page2Button = screen.getByText('2');
     fireEvent.click(page2Button);
 
-    expect(setSearchParams).toHaveBeenCalledWith(new URLSearchParams('page=2'));
+    expect(setSearchParams).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: '/',
+        query: expect.objectContaining({
+          page: '2',
+        }),
+      })
+    );
   });
 });

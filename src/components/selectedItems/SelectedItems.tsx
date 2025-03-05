@@ -1,11 +1,11 @@
 import { Button } from '../button/Button';
 import s from './style.module.css';
 import { useContext, useRef, useState } from 'react';
-import { removeAllPlanetsFromSelected } from '../../api/planets/planetSlice';
-import { useAppSelector } from '../../hooks/useAppSelector';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { THEMES } from '../../app/context/constants';
-import { ThemeContext } from '../../app/context/ThemeContext';
+import { removeAllPlanetsFromSelected } from '../../common/store/planetSlice';
+import { useAppDispatch, useAppSelector } from '../../common/hooks';
+import { THEMES } from '../../common/context/constants';
+import { ThemeContext } from '../../common/context/ThemeContext';
+import { generateCSVContent, triggerDownload } from '../../common/utils';
 
 export const SelectedItems = () => {
   const context = useContext(ThemeContext);
@@ -25,37 +25,10 @@ export const SelectedItems = () => {
   };
 
   const handleClickCreateCSV = () => {
-    const rows = [];
-    for (const key in selectedPlanets) {
-      rows.push([
-        selectedPlanets[key].name,
-        selectedPlanets[key].rotation_period,
-        selectedPlanets[key].diameter,
-        selectedPlanets[key].climate,
-        selectedPlanets[key].gravity,
-        selectedPlanets[key].population,
-      ]);
-    }
-
-    const csvContent = [
-      [
-        'Name',
-        'Rotation Period',
-        'Diameter',
-        'Climate',
-        'Gravity',
-        'Population',
-      ],
-      ...rows,
-    ]
-      .map((row) => row.join(';'))
-      .join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+    const csvContent = generateCSVContent(selectedPlanets);
+    const url = triggerDownload(csvContent);
 
     setDownloadUrl(url);
-
     setTimeout(() => {
       if (downloadRef.current) {
         downloadRef.current.click();

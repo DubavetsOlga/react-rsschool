@@ -8,13 +8,22 @@ type ThemeProps = {
 };
 
 export const Theme = ({ children }: ThemeProps) => {
-  const [theme, setTheme] = useState<string>(() => {
-    return JSON.parse(localStorage.getItem('theme') || 'null') || THEMES.LIGHT;
-  });
+  const [theme, setTheme] = useState<string>(THEMES.LIGHT);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('theme', JSON.stringify(theme));
-  }, [theme]);
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+      setTheme(JSON.parse(storedTheme));
+    }
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem('theme', JSON.stringify(theme));
+    }
+  }, [theme, isMounted]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>

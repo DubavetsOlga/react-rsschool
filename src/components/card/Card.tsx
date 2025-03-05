@@ -1,18 +1,16 @@
-import { ChangeEvent, ReactElement, MouseEvent } from 'react';
-import { useSearchParams, useNavigate } from 'react-router';
-import { getIdFromUrl } from '../../utils/getIdFromURL';
-import { useAppSelector } from '../../hooks/useAppSelector';
+import { ChangeEvent, MouseEvent } from 'react';
+import { useRouter } from 'next/router';
+import { getIdFromUrl } from '../../common/utils';
 import {
   removePlanetFromSelected,
   addPlanetToSelected,
-} from '../../api/planets/planetSlice';
-import { PlanetItem } from '../../api/planets/planetsApi.types';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
+} from '../../common/store/planetSlice';
+import { PlanetItem } from '../../common/types';
+import { useAppDispatch, useAppSelector } from '../../common/hooks';
 import s from './style.module.css';
 
-export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+export const Card = ({ item }: { item: PlanetItem }) => {
+  const router = useRouter();
   const dispatch = useAppDispatch();
 
   const selectedPlanets = useAppSelector(
@@ -29,19 +27,17 @@ export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
       return;
     }
 
-    const newSearchParams = new URLSearchParams(searchParams);
+    const newSearchParams = new URLSearchParams(
+      router.query as Record<string, string>
+    );
 
-    if (id === searchParams.get('detail')) {
+    if (id === router.query?.detail) {
       newSearchParams.delete('detail');
-      setSearchParams(newSearchParams);
-      return;
+      router.replace({ pathname: '/', query: newSearchParams.toString() });
+    } else {
+      newSearchParams.set('detail', id);
+      router.push({ pathname: '/detailed', query: newSearchParams.toString() });
     }
-
-    newSearchParams.set('detail', id);
-    navigate({
-      pathname: '/detailed',
-      search: newSearchParams.toString(),
-    });
   };
 
   const handleClickCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
@@ -54,9 +50,14 @@ export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
     }
   };
 
+  const isChecked = Object.prototype.hasOwnProperty.call(
+    selectedPlanets,
+    item.name
+  );
+
   return (
     <tr
-      onClick={(e) => handleClickDetail(e)}
+      onClick={handleClickDetail}
       role="button"
       aria-label={`View details of ${item.name}`}
       style={{ cursor: 'pointer' }}
@@ -65,11 +66,8 @@ export const Card = ({ item }: { item: PlanetItem }): ReactElement => {
         <input
           type="checkbox"
           className={s.checkbox}
-          checked={Object.prototype.hasOwnProperty.call(
-            selectedPlanets,
-            item.name
-          )}
-          onChange={(e) => handleClickCheckbox(e)}
+          checked={isChecked}
+          onChange={handleClickCheckbox}
         />
       </td>
       <td className={s.name}>{item.name}</td>

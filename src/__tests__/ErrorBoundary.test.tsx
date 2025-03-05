@@ -1,12 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ErrorBoundary } from '../components';
-import { BrowserRouter, useNavigate } from 'react-router';
-import { Path } from '../app/Routing';
+import { useRouter } from 'next/router';
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
 }));
 
 jest.mock('../components/button/Button', () => ({
@@ -26,7 +24,11 @@ describe('ErrorBoundary', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+    (useRouter as jest.Mock).mockReturnValue({
+      push: mockNavigate,
+      replace: mockNavigate,
+      pathname: '/',
+    });
   });
 
   const BuggyComponent = () => {
@@ -37,11 +39,9 @@ describe('ErrorBoundary', () => {
 
   it('should render children when no error occurs', () => {
     render(
-      <BrowserRouter>
-        <ErrorBoundary fallback={<div>Something went wrong!</div>}>
-          <div>Child content</div>
-        </ErrorBoundary>
-      </BrowserRouter>
+      <ErrorBoundary fallback={<div>Something went wrong!</div>}>
+        <div>Child content</div>
+      </ErrorBoundary>
     );
 
     expect(screen.getByText('Child content')).toBeInTheDocument();
@@ -53,11 +53,9 @@ describe('ErrorBoundary', () => {
       .mockImplementation(() => {});
 
     render(
-      <BrowserRouter>
-        <ErrorBoundary fallback={<div>Something went wrong!</div>}>
-          <ErrorThrowingChild />
-        </ErrorBoundary>
-      </BrowserRouter>
+      <ErrorBoundary fallback={<div>Something went wrong!</div>}>
+        <ErrorThrowingChild />
+      </ErrorBoundary>
     );
 
     expect(screen.getByText('Something went wrong!')).toBeInTheDocument();
@@ -67,11 +65,9 @@ describe('ErrorBoundary', () => {
 
   test('renders children when no error occurs', () => {
     render(
-      <BrowserRouter>
-        <ErrorBoundary>
-          <GoodComponent />
-        </ErrorBoundary>
-      </BrowserRouter>
+      <ErrorBoundary>
+        <GoodComponent />
+      </ErrorBoundary>
     );
 
     expect(screen.getByText('Good Component')).toBeInTheDocument();
@@ -81,11 +77,9 @@ describe('ErrorBoundary', () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
 
     render(
-      <BrowserRouter>
-        <ErrorBoundary>
-          <BuggyComponent />
-        </ErrorBoundary>
-      </BrowserRouter>
+      <ErrorBoundary>
+        <BuggyComponent />
+      </ErrorBoundary>
     );
 
     expect(screen.getByText('Something went wrong.')).toBeInTheDocument();
@@ -101,11 +95,9 @@ describe('ErrorBoundary', () => {
     const customFallback = <div>Custom Fallback UI</div>;
 
     render(
-      <BrowserRouter>
-        <ErrorBoundary fallback={customFallback}>
-          <BuggyComponent />
-        </ErrorBoundary>
-      </BrowserRouter>
+      <ErrorBoundary fallback={customFallback}>
+        <BuggyComponent />
+      </ErrorBoundary>
     );
 
     expect(screen.getByText('Custom Fallback UI')).toBeInTheDocument();
@@ -118,24 +110,20 @@ describe('ErrorBoundary', () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
 
     render(
-      <BrowserRouter>
-        <ErrorBoundary>
-          <BuggyComponent />
-        </ErrorBoundary>
-      </BrowserRouter>
+      <ErrorBoundary>
+        <BuggyComponent />
+      </ErrorBoundary>
     );
 
     const retryButton = screen.getByText('Retry');
     fireEvent.click(retryButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith(Path.Main);
+    expect(mockNavigate).toHaveBeenCalledWith('/');
 
     render(
-      <BrowserRouter>
-        <ErrorBoundary>
-          <GoodComponent />
-        </ErrorBoundary>
-      </BrowserRouter>
+      <ErrorBoundary>
+        <GoodComponent />
+      </ErrorBoundary>
     );
 
     expect(screen.getByText('Good Component')).toBeInTheDocument();

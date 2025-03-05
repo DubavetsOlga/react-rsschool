@@ -7,7 +7,6 @@ export { Header } from './header/Header';
 export { Input } from './input/Input';
 export { Layout } from './layout/Layout';
 export { Pagination } from './pagination/Pagination';
-export { Page404 } from './page404/Page404';
 export { Search } from './search/Search';
 export { SelectedItems } from './selectedItems/SelectedItems';
 export { Spinner } from './spinner/Spinner';

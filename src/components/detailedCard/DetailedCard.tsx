@@ -1,62 +1,48 @@
-import { useCallback, useContext, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router';
 import { Button } from '../button/Button';
-import { Spinner } from '../spinner/Spinner';
 import s from './style.module.css';
-import { Path } from '../../app/Routing';
-import { useGetPlanetByIdQuery } from '../../api/planets/planetsApi';
-import { THEMES } from '../../app/context/constants';
-import { ThemeContext } from '../../app/context/ThemeContext';
+import { PlanetItem } from '../../common/types';
+import { useRouter } from 'next/router';
 
-export const DetailedCard = () => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const detailId = searchParams.get('detail');
-  const context = useContext(ThemeContext);
-  const theme = context ? context.theme : THEMES.LIGHT;
+type DetailedCardProps = {
+  planet: PlanetItem;
+  error: string | null;
+};
 
-  const { data, isLoading, error } = useGetPlanetByIdQuery({
-    planetId: detailId || '',
-  });
+export const DetailedCard = ({ planet, error }: DetailedCardProps) => {
+  const router = useRouter();
 
-  const handleClickCloseDetails = useCallback(() => {
-    const newSearchParams = new URLSearchParams(searchParams);
+  const handleClickCloseDetails = () => {
+    const newSearchParams = new URLSearchParams(
+      router.query as Record<string, string>
+    );
     newSearchParams.delete('detail');
-
-    navigate({
-      pathname: Path.Main,
-      search: newSearchParams.toString(),
+    router.replace({
+      pathname: '/',
+      query: newSearchParams.toString(),
     });
-  }, [navigate, searchParams]);
-
-  useEffect(() => {
-    if (!detailId) {
-      handleClickCloseDetails();
-    }
-  }, [detailId, handleClickCloseDetails]);
+  };
 
   return (
     <div
-      className={`${s.details} ${theme === THEMES.LIGHT ? '' : s.darkTheme}`}
+      className={s.details}
       role="dialog"
       aria-labelledby="detailed-card-title"
     >
       <h3 id="detailed-card-title" className={s.title}>
         Planet Details
       </h3>
-      {error && <div>Not found</div>}
-      {isLoading && <Spinner />}
-      {!isLoading && data && (
+      {error && <div className={s.errorMessage}>{error}</div>}
+      {!error && (
         <div>
-          <p>Name: {data.name}</p>
-          <p>Rotation Period: {data.rotation_period}</p>
-          <p>Orbital Period: {data.orbital_period}</p>
-          <p>Diameter: {data.diameter}</p>
-          <p>Climate: {data.climate}</p>
-          <p>Gravity: {data.gravity}</p>
-          <p>Terrain: {data.terrain}</p>
-          <p>Surface Water: {data.surface_water}</p>
-          <p>Population: {data.population}</p>
+          <p>Name: {planet.name}</p>
+          <p>Rotation Period: {planet.rotation_period}</p>
+          <p>Orbital Period: {planet.orbital_period}</p>
+          <p>Diameter: {planet.diameter}</p>
+          <p>Climate: {planet.climate}</p>
+          <p>Gravity: {planet.gravity}</p>
+          <p>Terrain: {planet.terrain}</p>
+          <p>Surface Water: {planet.surface_water}</p>
+          <p>Population: {planet.population}</p>
         </div>
       )}
       <Button

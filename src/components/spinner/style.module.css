@@ -1,0 +1,26 @@
+.spinner {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 6px;
+  z-index: 1000;
+  background-color: blue;
+  animation: spinner 1.5s infinite linear;
+}
+
+@keyframes spinner {
+  0% {
+    width: 0;
+    opacity: 0.5;
+  }
+  50% {
+    width: 50%;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0.5;
+  }
+}

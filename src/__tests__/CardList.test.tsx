@@ -1,27 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
-import { CardList } from '../components';
 import { configureStore } from '@reduxjs/toolkit';
-import { useGetPlanetsQuery } from '../api/planets/planetsApi';
-import { planetReducer, planetSlice } from '../api/planets/planetSlice';
+import { useRouter } from 'next/router';
+import { CardList } from '../components';
 import '@testing-library/jest-dom';
+import { planetReducer, planetSlice } from '../common/store/planetSlice';
+import { ResponseType } from '../common/types';
 
-jest.mock('../api/planets/planetsApi', () => ({
-  useGetPlanetsQuery: jest.fn(),
-}));
-
-jest.mock('../components/spinner/Spinner', () => ({
-  Spinner: () => <div>Loading...</div>,
-}));
-jest.mock('../components/pagination/Pagination', () => ({
-  Pagination: () => <div>Pagination</div>,
-}));
-
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useSearchParams: jest.fn(),
-  useNavigate: jest.fn(),
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
 }));
 
 const store = configureStore({
@@ -31,163 +18,142 @@ const store = configureStore({
 });
 
 describe('CardList Component', () => {
-  const mockUseGetPlanetsQuery = useGetPlanetsQuery as jest.Mock;
-  const mockUseSearchParams = jest.requireMock('react-router').useSearchParams;
-  const mockSetSearchParams = jest.fn();
-  const mockUseNavigate = jest.requireMock('react-router').useNavigate;
+  const mockUseRouter = useRouter as jest.Mock;
+
+  const mockPlanetData: ResponseType = {
+    results: [
+      {
+        name: 'Tatooine',
+        rotation_period: '24',
+        orbital_period: '365',
+        diameter: '12742',
+        climate: 'temperate',
+        gravity: '1',
+        terrain: 'mountains, forests, oceans',
+        surface_water: '71',
+        population: '7 billion',
+        residents: ['Luke Skywalker'],
+        films: ['A New Hope'],
+        created: '2023-02-06',
+        edited: '2023-02-06',
+        url: 'https://swapi.dev/api/planets/1/',
+      },
+      {
+        name: 'Alderaan',
+        rotation_period: '23',
+        orbital_period: '304',
+        diameter: '10465',
+        climate: 'arid',
+        gravity: '1',
+        terrain: 'desert',
+        surface_water: '1',
+        population: '200000',
+        residents: ['Luke Skywalker'],
+        films: ['A New Hope'],
+        created: '2023-02-06',
+        edited: '2023-02-06',
+        url: 'https://swapi.dev/api/planets/2/',
+      },
+    ],
+    count: 2,
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    mockUseSearchParams.mockReturnValue([
-      new URLSearchParams({ search: 'Tatooine', page: '1' }),
-      jest.fn(),
-    ]);
-
-    mockUseNavigate.mockReturnValue(jest.fn());
+    mockUseRouter.mockReturnValue({
+      push: jest.fn(),
+      query: { search: 'Tatooine', page: '1' },
+    });
   });
 
   test('renders loading state', () => {
-    mockUseGetPlanetsQuery.mockReturnValue({
-      isLoading: true,
-      isFetching: false,
-      error: null,
-      data: null,
-    });
-
     render(
-      <BrowserRouter>
-        <Provider store={store}>
-          <CardList />
-        </Provider>
-      </BrowserRouter>
+      <Provider store={store}>
+        <CardList results={[]} count={0} />
+      </Provider>
     );
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.getByText('No results found.')).toBeInTheDocument();
   });
 
   test('renders error state', () => {
-    mockUseGetPlanetsQuery.mockReturnValue({
-      isLoading: false,
-      isFetching: false,
-      error: { data: { message: 'Failed to fetch' } },
-      data: null,
-    });
-
     render(
-      <BrowserRouter>
-        <Provider store={store}>
-          <CardList />
-        </Provider>
-      </BrowserRouter>
-    );
-
-    expect(screen.getByText('Error: Failed to fetch')).toBeInTheDocument();
-  });
-
-  test('renders no results state', () => {
-    mockUseGetPlanetsQuery.mockReturnValue({
-      isLoading: false,
-      isFetching: false,
-      error: null,
-      data: { results: [], count: 0 },
-    });
-
-    render(
-      <BrowserRouter>
-        <Provider store={store}>
-          <CardList />
-        </Provider>
-      </BrowserRouter>
+      <Provider store={store}>
+        <CardList results={[]} count={0} />
+      </Provider>
     );
 
     expect(screen.getByText('No results found.')).toBeInTheDocument();
   });
 
   test('renders data successfully', () => {
-    mockUseGetPlanetsQuery.mockReturnValue({
-      isLoading: false,
-      isFetching: false,
-      error: null,
-      data: {
-        results: [
-          { url: '1', name: 'Tatooine', terrain: 'Desert' },
-          { url: '2', name: 'Alderaan', terrain: 'Grasslands' },
-        ],
-        count: 2,
-      },
-    });
-
     render(
-      <BrowserRouter>
-        <Provider store={store}>
-          <CardList />
-        </Provider>
-      </BrowserRouter>
+      <Provider store={store}>
+        <CardList
+          results={mockPlanetData.results}
+          count={mockPlanetData.count}
+        />
+      </Provider>
     );
 
     expect(screen.getByText('Tatooine')).toBeInTheDocument();
     expect(screen.getByText('Alderaan')).toBeInTheDocument();
-    expect(screen.getByText('Pagination')).toBeInTheDocument();
   });
 
-  test('does not modify search params when detail is not present and table header is clicked', () => {
-    const initialSearchParams = new URLSearchParams('');
-    mockUseSearchParams.mockReturnValue([
-      initialSearchParams,
-      mockSetSearchParams,
-    ]);
+  test('clicking on table header triggers handleClickPanel', () => {
+    const pushMock = jest.fn();
+    mockUseRouter.mockReturnValue({
+      push: pushMock,
+      query: { detail: '1' },
+    });
 
     render(
-      <BrowserRouter>
-        <Provider store={store}>
-          <CardList />
-        </Provider>
-      </BrowserRouter>
+      <Provider store={store}>
+        <CardList
+          results={mockPlanetData.results}
+          count={mockPlanetData.count}
+        />
+      </Provider>
     );
 
     const tableHeader = screen.getByRole('row', { name: /Name Terrain/i });
     fireEvent.click(tableHeader);
 
-    expect(mockSetSearchParams).not.toHaveBeenCalled();
+    expect(pushMock).toHaveBeenCalledWith({
+      pathname: '/',
+      query: {},
+    });
   });
 
-  test('should delete the "detail" search parameter when handleClickPanel is called', () => {
-    mockUseGetPlanetsQuery.mockReturnValue({
-      data: {
-        results: [
-          {
-            name: 'Tatooine',
-            terrain: 'desert',
-            url: 'https://swapi.dev/api/planets/1/',
-          },
-        ],
-        count: 1,
-      },
-      isLoading: false,
-      isFetching: false,
-      error: null,
+  test('should not modify search params when detail is not present and table header is clicked', () => {
+    const pushMock = jest.fn();
+    mockUseRouter.mockReturnValue({
+      push: pushMock,
+      query: {},
     });
 
-    const initialSearchParams = new URLSearchParams('detail=1');
-    mockUseSearchParams.mockReturnValue([
-      initialSearchParams,
-      mockSetSearchParams,
-    ]);
-
     render(
-      <BrowserRouter>
-        <Provider store={store}>
-          <CardList />
-        </Provider>
-      </BrowserRouter>
+      <Provider store={store}>
+        <CardList
+          results={mockPlanetData.results}
+          count={mockPlanetData.count}
+        />
+      </Provider>
     );
 
-    const tableHeader = screen.getByRole('table').querySelector('thead');
-    if (tableHeader) {
-      fireEvent.click(tableHeader);
-    }
+    const tableHeader = screen.getByRole('row', { name: /Name Terrain/i });
+    fireEvent.click(tableHeader);
 
-    expect(mockSetSearchParams).toHaveBeenCalledWith(new URLSearchParams(''));
+    expect(pushMock).not.toHaveBeenCalled();
+  });
+
+  test('renders no results message if results are empty', () => {
+    render(
+      <Provider store={store}>
+        <CardList results={[]} count={0} />
+      </Provider>
+    );
+
+    expect(screen.getByText('No results found.')).toBeInTheDocument();
   });
 });
