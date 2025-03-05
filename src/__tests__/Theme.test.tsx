@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { THEMES } from '../app/context/constants';
-import { Theme } from '../app/context/Theme';
-import { ThemeContext } from '../app/context/ThemeContext';
-import s from '../app/context/style.module.css';
+import { THEMES } from '../common/components/context/constants';
+import { Theme } from '../common/components/context/Theme';
+import { ThemeContext } from '../common/components/context/ThemeContext';
+import s from '../common/components/context/style.module.css';
 
 const localStorageMock = (() => {
   let store: Record<string, string> = {};

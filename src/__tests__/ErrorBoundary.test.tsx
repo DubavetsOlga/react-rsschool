@@ -1,15 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ErrorBoundary } from '../components';
+import { ErrorBoundary } from '../common/components';
 import { BrowserRouter, useNavigate } from 'react-router';
-import { Path } from '../app/Routing';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),
 }));
 
-jest.mock('../components/button/Button', () => ({
+jest.mock('../common/components/button/Button', () => ({
   Button: jest.fn(({ onClick, children, style }) => (
     <button onClick={onClick} style={style}>
       {children}
@@ -128,7 +127,7 @@ describe('ErrorBoundary', () => {
     const retryButton = screen.getByText('Retry');
     fireEvent.click(retryButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith(Path.Main);
+    expect(mockNavigate).toHaveBeenCalledWith('/');
 
     render(
       <BrowserRouter>

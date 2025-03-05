@@ -1,0 +1,75 @@
+import fetchMock from 'jest-fetch-mock';
+import { loader } from '../routes/main/Main';
+import { ResponseType } from '../store/planetsApi.types';
+import '@testing-library/jest-dom';
+
+fetchMock.enableMocks();
+
+jest.mock('../common/components/search/Search', () => {
+  const MockSearch = () => <div>Search Component</div>;
+  MockSearch.displayName = 'Search';
+  return MockSearch;
+});
+
+jest.mock('../common/components/cardList/CardList', () => {
+  const MockCardList = ({ results, count }: ResponseType) => (
+    <div>
+      CardList Component - {results.length} items, {count} total
+    </div>
+  );
+  MockCardList.displayName = 'CardList';
+  return MockCardList;
+});
+
+jest.mock('../common/components/selectedItems/SelectedItems', () => {
+  const MockSelectedItems = () => <div>SelectedItems Component</div>;
+  MockSelectedItems.displayName = 'SelectedItems';
+  return MockSelectedItems;
+});
+
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useLoaderData: jest.fn(),
+}));
+
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useLoaderData: jest.fn(),
+}));
+
+describe('Main Component', () => {
+  beforeEach(() => {
+    fetchMock.resetMocks();
+    jest.clearAllMocks();
+  });
+
+  test('loader function fetches data correctly', async () => {
+    const mockResponse = {
+      results: [{ name: 'Tatooine' }, { name: 'Alderaan' }],
+      count: 2,
+    };
+
+    fetchMock.mockResponseOnce(JSON.stringify(mockResponse));
+
+    const request = new Request(
+      'https://swapi.dev/api/planets/?search=Tatooine&page=1'
+    );
+    const response = await loader({ request });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://swapi.dev/api/planets/?search=Tatooine&page=1'
+    );
+    expect(response).toEqual(mockResponse);
+  });
+
+  test('loader function throws an error when fetch fails', async () => {
+    fetchMock.mockRejectOnce(new Error('Failed to fetch planets'));
+
+    const request = new Request(
+      'https://swapi.dev/api/planets/?search=Tatooine&page=1'
+    );
+    await expect(loader({ request })).rejects.toThrow(
+      'Failed to fetch planets'
+    );
+  });
+});

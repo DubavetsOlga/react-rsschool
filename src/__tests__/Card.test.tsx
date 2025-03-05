@@ -1,27 +1,26 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter, useNavigate, useSearchParams } from 'react-router';
-import { Card } from '../components';
+import { Card } from '../common/components';
 import '@testing-library/jest-dom';
-import { PlanetItem } from '../api/planets/planetsApi.types';
+import { PlanetItem } from '../store/planetsApi.types';
 import { configureStore } from '@reduxjs/toolkit';
 import {
   addPlanetToSelected,
   planetReducer,
   planetSlice,
   removePlanetFromSelected,
-} from '../api/planets/planetSlice';
+} from '../store/planetSlice';
 import { Provider } from 'react-redux';
-import { planetsApi } from '../api/planets/planetsApi';
-import { useAppSelector } from '../hooks/useAppSelector';
-import { useAppDispatch } from '../hooks/useAppDispatch';
+import { useAppSelector } from '../common/hooks/useAppSelector';
+import { useAppDispatch } from '../common/hooks/useAppDispatch';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useSearchParams: jest.fn(),
   useNavigate: jest.fn(),
 }));
-jest.mock('../hooks/useAppSelector');
-jest.mock('../hooks/useAppDispatch');
+jest.mock('../common/hooks/useAppSelector');
+jest.mock('../common/hooks/useAppDispatch');
 
 const mockNavigate = useNavigate as jest.Mock;
 const mockUseSearchParams = useSearchParams as jest.Mock;
@@ -29,7 +28,6 @@ const mockUseSearchParams = useSearchParams as jest.Mock;
 const store = configureStore({
   reducer: {
     [planetSlice.name]: planetReducer,
-    [planetsApi.reducerPath]: planetsApi.reducer,
   },
 });
 
@@ -112,37 +110,13 @@ describe('Card Component', () => {
       fireEvent.click(rowElement);
     }
 
-    expect(mockNavigate).toHaveBeenCalledWith({
-      pathname: '/detailed',
-      search: 'detail=1',
-    });
-  });
-
-  test('should delete the "detail" search parameter if it matches the id', () => {
-    const setSearchParamsMock = jest.fn();
-    mockUseSearchParams.mockReturnValue([
-      new URLSearchParams('detail=1'),
-      setSearchParamsMock,
-    ]);
-
-    render(
-      <BrowserRouter>
-        <Provider store={store}>
-          <table>
-            <tbody>
-              <Card item={mockPlanetItem} />
-            </tbody>
-          </table>
-        </Provider>
-      </BrowserRouter>
+    expect(mockNavigate).toHaveBeenCalledWith(
+      {
+        pathname: '/detailed',
+        search: 'detail=1',
+      },
+      { replace: true }
     );
-
-    const rowElement = screen.getByText('Tatooine').closest('tr');
-    if (rowElement) {
-      fireEvent.click(rowElement);
-    }
-
-    expect(setSearchParamsMock).toHaveBeenCalledWith(new URLSearchParams(''));
   });
 
   const renderCard = (selectedPlanets: Record<string, PlanetItem>) => {

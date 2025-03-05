@@ -104,3 +104,6 @@ dist
 .tern-port
 
 /.idea/
+
+.react-router
+/.swc/
